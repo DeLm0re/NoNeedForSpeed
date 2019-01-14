@@ -54,9 +54,6 @@ int main(int argc, char** argv)
 		cutBetweenLevel(tabHough, 0, 80);
 		//Making sure to have a blob around each point to find the regions easily with a dillatation filter
 		applyDillatationFilter(tabHough, 200);
-		printf(" Creating the image of the hough transform\n");
-		DonneesImageRGB* houghImage = houghToRGB(tabHough);
-		ecrisBMPRGB_Dans(houghImage, "3 - hough.bmp");
 		
 		// We find each point on the hough transform by finding regions using the bottom up method
 		printf("Creating a region for each lines on the hough transform \n");
@@ -80,7 +77,6 @@ int main(int argc, char** argv)
 		libereDonneesTab(&tabImage);
 		
 		libereDonneesTab(&tabHough);
-		libereDonneesImageRGB(&houghImage);
 		
 		libereDonneesTab(&tabRegionHough);
 		destructIdRegions(&idRegionsHough);
