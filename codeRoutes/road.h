@@ -8,8 +8,8 @@
 #include "image.h"
 
 //Definition of the miniumum and the maximum angle a road can have (in radian)
-#define ANGLE_ROAD_MIN (45 *M_PI/180)
-#define ANGLE_ROAD_MAX (135 *M_PI/180)
+#define ANGLE_ROAD_MIN (15 *M_PI/180)
+#define ANGLE_ROAD_MAX (165 *M_PI/180)
 
 //Definition of the road's image dimensions (must preferable to be a multiple of 2)
 #define HEIGHT_IMAGE_ROAD (500)

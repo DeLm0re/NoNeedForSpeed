@@ -128,12 +128,26 @@ DonneesImageRGB* createImageRoad(road* myRoad)
 
         if(angleRadian < 1.5708) //90°
         {
-            currentWidth = (int) (currentWidth + (heightStep / tan(angleRadian)));
+            if((int) (currentWidth + (heightStep / tan(angleRadian))) >= WIDTH_IMAGE_ROAD)
+            {
+                currentWidth = (int) (currentWidth - (heightStep / tan(angleRadian)));
+            }
+            else
+            {
+                currentWidth = (int) (currentWidth + (heightStep / tan(angleRadian)));
+            }
         }
 
         if(angleRadian > 1.5708) //90°
         {
-            currentWidth = (int) (currentWidth - (heightStep / tan(M_PI - angleRadian)));
+            if((int) (currentWidth - (heightStep / tan(M_PI - angleRadian))) < 0)
+            {
+                currentWidth = (int) (currentWidth + (heightStep / tan(M_PI - angleRadian)));
+            }
+            else
+            {
+                currentWidth = (int) (currentWidth - (heightStep / tan(M_PI - angleRadian)));
+            }
         }
 
         myImageRoad->donneesTab[currentWidth][currentHeight][RED] = 0;
