@@ -4,12 +4,12 @@
 #include <unistd.h>
 #include <math.h>
 
+//Other include
+#include "image.h"
+
 //Definition of the miniumum and the maximum angle a road can have (in radian)
 #define ANGLE_ROAD_MIN (0.785398) //45°
 #define ANGLE_ROAD_MAX (2.35619) //135°
-
-//Definition of PI
-#define PI (3.1415926535)
 
 //Définition of the type "road"
 typedef struct road

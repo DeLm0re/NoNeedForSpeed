@@ -77,7 +77,7 @@ void printfRoad(road* myRoad)
 
     for(index = 0; index < myRoad->lengh; index++)
     {
-        printf("\t //// %f | %f° //// \n", myRoad->values[index], myRoad->values[index]*180/PI);
+        printf("\t //// %f | %f° //// \n", myRoad->values[index], myRoad->values[index]*180/M_PI);
     }
 
     printf("\t /////  ////  ////  ////   ///// \n\n");
