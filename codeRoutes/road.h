@@ -2,9 +2,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <math.h>
 
-//Définition of the type "road" (dynamic allocation)
-typedef int *road;
+//Definition of the miniumum and the maximum angle a road can have (in radian)
+#define ANGLE_ROAD_MIN (0.785398) //45°
+#define ANGLE_ROAD_MAX (2.35619) //135°
+
+//Definition of PI
+#define PI (3.1415926535)
+
+//Définition of the type "road"
+typedef struct road
+{
+    float *values;
+    int lengh;
+}road;
 
 /**
 * \fn road createRoad(int lengh, int value)
@@ -12,15 +24,26 @@ typedef int *road;
 *
 * \param lengh : the lengh of the road
 * \param value : the value used to initialise each step of the road
-* \return road : a road which is typedef in "road.h"
+* \return road* : a pointoer on a road which is typedef in "road.h"
 */
-road createRoad(int lengh, int value);
+road* createRoad(int lengh, float value);
 
 /**
 * \fn void freeRoad(road* myRoad)
 * \brief function that free the memory allocated to a road
 *
-* \param road* : pointer on the road we want to free
+* \param road** : double pointer on the road we want to free
 * \return void
 */
-void freeRoad(road* myRoad);
+void freeRoad(road** myRoad);
+
+/**
+* \fn void generateStepsRoad(road* myRoad)
+* \brief function that generate steps on a road
+*
+* \param road* : pointer on the road we want to modify to include steps
+* \return void
+*/
+void generateStepsRoad(road* myRoad);
+
+void printfRoad(road* myRoad);

@@ -14,9 +14,15 @@
 
 int main(void)
 {
-	road myRoad = NULL;
+	srand((unsigned)(time(0)));
+
+	road *myRoad = NULL;
 
 	myRoad = createRoad(10, 0);
+
+	generateStepsRoad(myRoad);
+
+	printfRoad(myRoad);
 
 	freeRoad(&myRoad);
 
