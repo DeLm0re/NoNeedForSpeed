@@ -62,6 +62,13 @@ void generateStepsRoad(road* myRoad)
     }
 }
 
+/**
+* \fn void printfRoad(road* myRoad)
+* \brief function that display the road in console
+*
+* \param road* : pointer on the road we want to display
+* \return void
+*/
 void printfRoad(road* myRoad)
 {
     int index;
