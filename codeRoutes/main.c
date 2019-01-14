@@ -18,13 +18,21 @@ int main(void)
 
 	road *myRoad = NULL;
 
-	myRoad = createRoad(10, 0);
+	DonneesImageRGB *myImageRoad = NULL;
+
+	myRoad = createRoad(LENGHT_ROAD, 0);
 
 	generateStepsRoad(myRoad);
 
 	printfRoad(myRoad);
 
+	myImageRoad = createImageRoad(myRoad);
+
+	ecrisBMPRGB_Dans(myImageRoad, "roadSteps.bmp");
+
 	freeRoad(&myRoad);
+
+	libereDonneesImageRGB(&myImageRoad);
 
 	return 0;
 }
