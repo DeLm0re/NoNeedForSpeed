@@ -15,3 +15,12 @@ typedef int *road;
 * \return road : a road which is typedef in "road.h"
 */
 road createRoad(int lengh, int value);
+
+/**
+* \fn void freeRoad(road* myRoad)
+* \brief function that free the memory allocated to a road
+*
+* \param road* : pointer on the road we want to free
+* \return void
+*/
+void freeRoad(road* myRoad);

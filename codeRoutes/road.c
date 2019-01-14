@@ -24,3 +24,16 @@ road createRoad(int lengh, int value)
 
     return(myRoad);
 }
+
+/**
+* \fn void freeRoad(road* myRoad)
+* \brief function that free the memory allocated to a road
+*
+* \param road* : pointer on the road we want to free
+* \return void
+*/
+void freeRoad(road* myRoad)
+{
+    free(*myRoad);
+    myRoad = NULL;
+}
