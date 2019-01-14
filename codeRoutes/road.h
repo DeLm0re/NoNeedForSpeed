@@ -62,4 +62,11 @@ void generateStepsRoad(road* myRoad);
 */
 void printfRoad(road* myRoad);
 
+/**
+* \fn DonneesImageRGB* createImageRoad(road* myRoad)
+* \brief function that create an image of the road we can display with BmpLib
+*
+* \param road* : pointer on the road we want to display
+* \return DonneesImageRGB* : pointer on an image DonneesImageRGB (image of the road which can be displayed)
+*/
 DonneesImageRGB* createImageRoad(road* myRoad);
