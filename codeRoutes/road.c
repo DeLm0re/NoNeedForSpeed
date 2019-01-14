@@ -2,25 +2,25 @@
 #include "road.h"
 
 /**
- * \fn Field initialiseField(int height, int width)
- * \brief function that initialise our field to make our environment
- *
- * \param height : height of the field, must be 1 widen than the original size because the edges is initialized with -1
- * \param width : width of the field, must be 1 widen than the original size because the edges is initialized with -1
- * \return Field : A field, which is a tydef declared in core.h (2D array)
- */
- road createRoad(int lengh, int value)
- {
-     int index;
+* \fn road createRoad(int lengh, int value)
+* \brief function that initialise and return a road
+*
+* \param lengh : the lengh of the road
+* \param value : the value used to initialise each step of the road
+* \return road : a road which is typedef in "road.h"
+*/
+road createRoad(int lengh, int value)
+{
+    int index;
 
-     road myRoad;
+    road myRoad;
 
-     myRoad = (road)malloc(sizeof(int) * lengh);
+    myRoad = (road)malloc(sizeof(int) * lengh);
 
-     for(index = 0; index < lengh; index++)
-     {
-         myRoad[index] = value;
-     }
+    for(index = 0; index < lengh; index++)
+    {
+        myRoad[index] = value;
+    }
 
-     return(myRoad);
- }
+    return(myRoad);
+}

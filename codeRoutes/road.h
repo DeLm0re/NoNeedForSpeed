@@ -6,4 +6,12 @@
 //Définition of the type "road" (dynamic allocation)
 typedef int *road;
 
- road createRoad(int lengh, int value);
+/**
+* \fn road createRoad(int lengh, int value)
+* \brief function that initialise and return a road
+*
+* \param lengh : the lengh of the road
+* \param value : the value used to initialise each step of the road
+* \return road : a road which is typedef in "road.h"
+*/
+road createRoad(int lengh, int value);
