@@ -38,11 +38,37 @@ int main(int argc, char** argv)
 	    //--- preprocessing ---//
 	    /////////////////////////
 	    
-		printf("Creating the matrice from the image\n");
+		printf("Creating a matrice of pixels from the image\n");
 		DonneesImageTab* tabImage = RGBToTab(image);
-		printf(" Creating the image wiewed by the retina\n");
-		DonneesImageRGB* newImage = tabToRGB(tabImage);
-		ecrisBMPRGB_Dans(newImage, "newImage.bmp");
+		
+		//////////////////////////
+	    //--- line detection ---//
+	    //////////////////////////
+		
+		// We create the hough transform of the image
+		printf("Creating the Hough transformation of the image\n");
+		DonneesImageTab* tabHough = createHough(tabImage, 200, 720);
+		printf(" Edit it so it is easier to use\n");
+        //Making every point black or white
+		cutBetweenLevel(tabHough, 80, 255);
+		cutBetweenLevel(tabHough, 0, 80);
+		//Making sure to have a blob around each point to find the regions easily with a dillatation filter
+		applyDillatationFilter(tabHough, 200);
+		printf(" Creating the image of the hough transform\n");
+		DonneesImageRGB* houghImage = houghToRGB(tabHough);
+		ecrisBMPRGB_Dans(houghImage, "3 - hough.bmp");
+		
+		// We find each point on the hough transform by finding regions using the bottom up method
+		printf("Creating a region for each lines on the hough transform \n");
+		DonneesImageTab* tabRegionHough = initTabRegion(tabHough->largeurImage, tabHough->hauteurImage);
+		IdRegions* idRegionsHough = findAllRegionBottomUp(tabHough, tabRegionHough, 200);
+		printf(" line founds : %d\n", idRegionsHough->size-1);
+		
+		printf("Finding the two lines and their crossing point\n");
+		Line* line1 = getCenterLineFromRegion(tabHough, tabRegionHough, idRegionsHough->regions[1], 0);
+        Line* line2 = getCenterLineFromRegion(tabHough, tabRegionHough, idRegionsHough->regions[2], 0);
+        Point* point = getCrossingPoint(line1, line2);
+        printf(" Crossing point found : (%d, %d)\n", point->x, point->y);
 		
 		/////////////////////////////
 	    //--- memory liberation ---//
@@ -52,7 +78,17 @@ int main(int argc, char** argv)
 		libereDonneesImageRGB(&image);
 		
 		libereDonneesTab(&tabImage);
-		libereDonneesImageRGB(&newImage);
+		
+		libereDonneesTab(&tabHough);
+		libereDonneesImageRGB(&houghImage);
+		
+		libereDonneesTab(&tabRegionHough);
+		destructIdRegions(&idRegionsHough);
+		free(line1);
+		free(line2);
+		
+		free(point);
+		
 	}
 	else
 	{
