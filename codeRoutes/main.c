@@ -14,7 +14,11 @@
 
 int main(void)
 {
+<<<<<<< HEAD
 	srand((unsigned)(time(0)));
 
+=======
+  srand(NULL);
+>>>>>>> master
 	return 0;
 }

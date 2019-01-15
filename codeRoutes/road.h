@@ -15,25 +15,25 @@
 #define HEIGHT_IMAGE_ROAD (500)
 #define WIDTH_IMAGE_ROAD (500)
 
-//Definition of the road's lenght
-#define LENGHT_ROAD (10)
+//Definition of the road's length
+#define LENGTH_ROAD (10)
 
 //Définition of the type "road"
 typedef struct road
 {
     float *values;
-    int lenght;
+    int length;
 }road;
 
 /**
-* \fn road createRoad(int lenght, int value)
+* \fn road createRoad(int length, int value)
 * \brief function that initialise and return a road
 *
-* \param lenght : the lenght of the road
+* \param length : the length of the road
 * \param value : the value used to initialise each step of the road
 * \return road* : a pointer on a road which is typedef in "road.h"
 */
-road* createRoad(int lenght, float value);
+road* createRoad(int length, float value);
 
 /**
 * \fn void freeRoad(road* myRoad)
@@ -54,13 +54,13 @@ void freeRoad(road** myRoad);
 void generateStepsRoad(road* myRoad);
 
 /**
-* \fn void printfRoad(road* myRoad)
+* \fn void printRoad(road* myRoad)
 * \brief function that display the road in console
 *
 * \param road* : pointer on the road we want to display
 * \return void
 */
-void printfRoad(road* myRoad);
+void printRoad(road* myRoad);
 
 /**
 * \fn DonneesImageRGB* createImageRoad(road* myRoad)

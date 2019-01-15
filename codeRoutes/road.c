@@ -1,15 +1,16 @@
 //Inclusion of the prototypes of the functions
 #include "road.h"
+#include "displayRoad.h"
 
 /**
-* \fn road createRoad(int lenght, int value)
+* \fn road createRoad(int length, int value)
 * \brief function that initialise and return a road
 *
-* \param lenght : the lenght of the road
+* \param length : the length of the road
 * \param value : the value used to initialise each step of the road
 * \return road* : a pointer on a road which is typedef in "road.h"
 */
-road* createRoad(int lenght, float value)
+road* createRoad(int length, float value)
 {
     int index;
 
@@ -18,11 +19,11 @@ road* createRoad(int lenght, float value)
     myRoad = (road*)malloc(sizeof(road));
 
     myRoad->values = NULL;
-    myRoad->lenght = lenght;
+    myRoad->length = length;
 
-    myRoad->values = (float*)malloc(sizeof(float) * myRoad->lenght);
+    myRoad->values = (float*)malloc(sizeof(float) * myRoad->length);
 
-    for(index = 0; index < myRoad->lenght; index++)
+    for(index = 0; index < myRoad->length; index++)
     {
         myRoad->values[index] = value;
     }
@@ -56,26 +57,26 @@ void generateStepsRoad(road* myRoad)
 {
     int index;
 
-    for(index = 0; index < myRoad->lenght; index++)
+    for(index = 0; index < myRoad->length; index++)
     {
         myRoad->values[index] = ANGLE_ROAD_MIN + (float)(rand()) /( (float)(RAND_MAX/(ANGLE_ROAD_MAX-ANGLE_ROAD_MIN)));
     }
 }
 
 /**
-* \fn void printfRoad(road* myRoad)
+* \fn void printRoad(road* myRoad)
 * \brief function that display the road in console
 *
 * \param road* : pointer on the road we want to display
 * \return void
 */
-void printfRoad(road* myRoad)
+void printRoad(road* myRoad)
 {
     int index;
 
     printf("\n\t ////   Value  of the road   //// \n");
 
-    for(index = 0; index < myRoad->lenght; index++)
+    for(index = 0; index < myRoad->length; index++)
     {
         printf("\t //// %f | %f° //// \n", myRoad->values[index], myRoad->values[index]*180/M_PI);
     }
@@ -99,10 +100,12 @@ DonneesImageRGB* createImageRoad(road* myRoad)
 
     DonneesImageTab *myImageRoad = initTab(WIDTH_IMAGE_ROAD, HEIGHT_IMAGE_ROAD);
 
-    int heightStep = (HEIGHT_IMAGE_ROAD-1)/LENGHT_ROAD;
+    int heightStep = (HEIGHT_IMAGE_ROAD-1)/LENGTH_ROAD;
 
-    int currentHeight = 0;
-    int currentWidth =  WIDTH_IMAGE_ROAD/2;
+    int previousHeight = 0;
+    int previousWidth = WIDTH_IMAGE_ROAD/2;
+    int currentHeight = previousHeight;
+    int currentWidth =  previousWidth;
 
     float angleRadian;
 
@@ -120,7 +123,7 @@ DonneesImageRGB* createImageRoad(road* myRoad)
     myImageRoad->donneesTab[currentWidth][currentHeight][GREEN] = 0;
     myImageRoad->donneesTab[currentWidth][currentHeight][BLUE] = 0;
 
-    for(index = 0; index < myRoad->lenght; index++)
+    for(index = 0; index < myRoad->length; index++)
     {
         angleRadian = myRoad->values[index];
 
@@ -150,9 +153,10 @@ DonneesImageRGB* createImageRoad(road* myRoad)
             }
         }
 
-        myImageRoad->donneesTab[currentWidth][currentHeight][RED] = 0;
-        myImageRoad->donneesTab[currentWidth][currentHeight][GREEN] = 0;
-        myImageRoad->donneesTab[currentWidth][currentHeight][BLUE] = 0;
+        printLine(myImageRoad, previousWidth, previousHeight, currentWidth, currentHeight);
+
+        previousWidth = currentWidth;
+        previousHeight = currentHeight;
     }
 
     return(tabToRGB(myImageRoad));

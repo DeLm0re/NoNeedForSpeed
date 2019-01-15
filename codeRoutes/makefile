@@ -7,7 +7,11 @@ CC = gcc
 CLIBS = -lm
 
 TARGET = main
+<<<<<<< HEAD
 DEPENDENCIES = main.o BmpLib.o OutilsLib.o image.o region.o road.o
+=======
+DEPENDENCIES = main.o BmpLib.o OutilsLib.o image.o region.o displayRoad.o
+>>>>>>> display-road
 
 $(TARGET): $(TARGET).o $(DEPENDENCIES)
 	@echo "Links edition :"

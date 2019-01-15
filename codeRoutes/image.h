@@ -147,8 +147,10 @@ DonneesImageRGB* houghToRGB(DonneesImageTab* tabHough);
 Line* getMaxLine(DonneesImageTab* tabHough);
 // Returns the ratio of the given line that realy exists on the image and set the coordinates and the ratio of the Line structure
 void updateLineInfo(DonneesImageTab* tabImage, Line* line, int sensibility);
-// trace the given line on the given DonneesImageTab with the given color
+// Trace the given line on the given DonneesImageTab with the given color
 void traceLineOnImage(DonneesImageTab* tabImage, Line* line, int r, int g, int b);
+// Find the crossing point between two lines
+Point* getCrossingPoint(Line* line1, Line* line2);
 
 //////////////////
 //--- Filter ---//

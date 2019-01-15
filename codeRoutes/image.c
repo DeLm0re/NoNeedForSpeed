@@ -603,6 +603,75 @@ void traceLineOnImage(DonneesImageTab* tabImage, Line* line, int r, int g, int b
 	}
 }
 
+Point* getCrossingPoint(Line* line1, Line* line2)
+{
+    float maxR1, maxR2;
+	float angle1,angle2;
+	float radius1, radius2;
+	// y = mx + n equation
+	float m1, n1, m2, n2;
+	
+	maxR1 = line1->maxRIndex;
+	angle1 = nmap(line1->angularIndex, 0, line1->maxAngularIndex-1, 0, M_PI);
+	radius1 = nmap(line1->rIndex, 0, line1->maxRIndex-1, -maxR1, maxR1);
+	if (angle1 != 0)
+	{
+	    m1 = tan(angle1 - M_PI/2);
+	    n1 = radius1 / sin(angle1);
+	}
+	else
+	{
+	    m1 = NAN;
+	    n1 = NAN;
+	}
+	
+	
+	maxR2 = line2->maxRIndex;
+	angle2 = nmap(line2->angularIndex, 0, line2->maxAngularIndex-1, 0, M_PI);
+	radius2 = nmap(line2->rIndex, 0, line2->maxRIndex-1, -maxR2, maxR2);
+	if (angle2 != 0)
+	{
+	    m2 = tan(angle2 - M_PI/2);
+	    n2 = radius2 / sin(angle2);
+	}
+	else
+	{
+	    m2 = NAN;
+	    n2 = NAN;
+	}
+	
+	if (angle1 == 0 && angle2 == 0 && m1 != m2)
+	{
+	    return NULL;
+	}
+	else
+	{
+	    Point* point = (Point*) malloc(sizeof(Point));
+        point->x = -1;
+        point->y = -1;
+        point->label = -1;
+        point->coef = -1;
+        if (angle1 == 0)
+        {
+            point->x = radius1;
+            point->y = radius1*m2 + n2;
+            
+        }
+        else if (angle2 == 0)
+        {
+            point->x = radius2;
+            point->y = radius2*m1 + n1;
+        }
+        else
+        {
+            point->x = (n2-n1)/(m1-m2);
+            point->y = point->x*m1 + n1;
+        }
+        
+        return point;
+    }
+}
+
 Filter* createAvarageFilter(int width, int height)
 {
 	Filter* filter = initFilter(width, height);
