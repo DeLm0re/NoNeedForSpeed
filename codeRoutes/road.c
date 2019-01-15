@@ -1,5 +1,6 @@
 //Inclusion of the prototypes of the functions
 #include "road.h"
+#include "displayRoad.h"
 
 /**
 * \fn road createRoad(int length, int value)
@@ -101,8 +102,10 @@ DonneesImageRGB* createImageRoad(road* myRoad)
 
     int heightStep = (HEIGHT_IMAGE_ROAD-1)/LENGTH_ROAD;
 
-    int currentHeight = 0;
-    int currentWidth =  WIDTH_IMAGE_ROAD/2;
+    int previousHeight = 0;
+    int previousWidth = WIDTH_IMAGE_ROAD/2;
+    int currentHeight = previousHeight;
+    int currentWidth =  previousWidth;
 
     float angleRadian;
 
@@ -150,9 +153,10 @@ DonneesImageRGB* createImageRoad(road* myRoad)
             }
         }
 
-        myImageRoad->donneesTab[currentWidth][currentHeight][RED] = 0;
-        myImageRoad->donneesTab[currentWidth][currentHeight][GREEN] = 0;
-        myImageRoad->donneesTab[currentWidth][currentHeight][BLUE] = 0;
+        printLine(myImageRoad, previousWidth, previousHeight, currentWidth, currentHeight);
+
+        previousWidth = currentWidth;
+        previousHeight = currentHeight;
     }
 
     return(tabToRGB(myImageRoad));
