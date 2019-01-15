@@ -149,8 +149,6 @@ Line* getMaxLine(DonneesImageTab* tabHough);
 void updateLineInfo(DonneesImageTab* tabImage, Line* line, int sensibility);
 // Trace the given line on the given DonneesImageTab with the given color
 void traceLineOnImage(DonneesImageTab* tabImage, Line* line, int r, int g, int b);
-// Find the crossing point between two lines
-Point* getCrossingPoint(Line* line1, Line* line2);
 
 //////////////////
 //--- Filter ---//
