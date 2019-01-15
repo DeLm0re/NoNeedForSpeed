@@ -32,7 +32,10 @@ DonneesImageTab *createRoadImage(int horizonAbs, int horizonOrd, car carPosition
  *      int y1  :   ordinate of the starting point
  *      int x2  :   abscissa of the ending point
  *      int y2  :   ordinate of the ending point
+ *      int red :   red value of the color of the line
+ *      int green:  green value of the color of the line
+ *      int blue:   blue value of the color of the line 
  * 
  * @return  :   \
  */
-void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2);
+void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2, int red, int green, int blue);

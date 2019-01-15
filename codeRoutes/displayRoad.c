@@ -16,22 +16,50 @@
  */
 DonneesImageTab *createRoadImage(int horizonAbs, int horizonOrd, car carPosition, int horizonHeight, int roadWidth, int imageSize)
 {
+    //Image of the road
     DonneesImageTab *image = initTab(imageSize, imageSize);
+
+    //Index used to browse the image
+    int index;
+
+    //Print the ground
+    for(index = horizonHeight - 1; index >= 0; index--)
+    {
+        printLine(image, 0, index, imageSize-1, index, 10, 128, 10);
+    }
+
+    //Print the road
+    for(index = imageSize/roadWidth; index < imageSize - (imageSize/roadWidth); index++)
+    {
+        printLine(image, horizonAbs, horizonOrd, index, 0, 64, 64, 64);
+    }
+
+    //Print the road left line
+    for(index = imageSize/roadWidth; index < imageSize/roadWidth + (imageSize/20); index++)
+    {
+        printLine(image, horizonAbs, horizonOrd, index, 0, 192, 192, 192);
+    }
+    
+    //Print the road right line
+    for(index = imageSize - (imageSize / roadWidth); index > imageSize - (imageSize / roadWidth) - (imageSize/20); index--)
+    {
+        printLine(image, horizonAbs, horizonOrd, index, 0, 192, 192, 192);
+    }
+
+    //Print the horizon line
+    printLine(image, 0, horizonHeight, imageSize-1, horizonHeight, 0, 128, 255);
+    //And the sky
+    for(index = horizonHeight + 1; index < image->hauteurImage; index++)
+    {
+        printLine(image, 0, index, imageSize-1, index, 0, 128, 255);
+    }
 
     //Print the horizon point
     image->donneesTab[horizonAbs][horizonOrd][RED] = 255;
 
-    //Print the horizon line
-    printLine(image, 0, horizonHeight, imageSize-1, horizonHeight);
-
-    //Print the road lines
-    printLine(image, imageSize/roadWidth, 0, horizonAbs, horizonOrd);
-    printLine(image, imageSize - (imageSize / roadWidth), 0, horizonAbs, horizonOrd);
-
     //Print the car
     image->donneesTab[carPosition.abscissa][0][RED] = 255;
     
-
     return image;
 }
 
@@ -44,10 +72,13 @@ DonneesImageTab *createRoadImage(int horizonAbs, int horizonOrd, car carPosition
  *      int y1  :   ordinate of the starting point
  *      int x2  :   abscissa of the ending point
  *      int y2  :   ordinate of the ending point
+ *      int red :   red value of the color of the line
+ *      int green:  green value of the color of the line
+ *      int blue:   blue value of the color of the line 
  * 
  * @return  :   \
  */
-void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
+void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2, int red, int green, int blue)
 {
 	int dx, dy;
 	dx = x2 -x1;
@@ -72,7 +103,9 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 						while(1) 
 						{
 							// déplacements horizontaux
-							image->donneesTab[x1][y1][GREEN] = 255;
+                            image->donneesTab[x1][y1][RED] = red;
+							image->donneesTab[x1][y1][GREEN] = green;
+                            image->donneesTab[x1][y1][BLUE] = blue;
 							x1 = x1 + 1;
 							if(x1 == x2) 
 							{
@@ -95,7 +128,9 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 						while(1) 
 						{  
 							// déplacements verticaux
-							image->donneesTab[x1][y1][GREEN] = 255;
+                            image->donneesTab[x1][y1][RED] = red;
+							image->donneesTab[x1][y1][GREEN] = green;
+                            image->donneesTab[x1][y1][BLUE] = blue;
 							y1 = y1 + 1;
 							if(y1 == y2) 
 							{
@@ -122,7 +157,9 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 						dy = dy * 2;  
 						while(1) 
 						{  // déplacements horizontaux
-							image->donneesTab[x1][y1][GREEN] = 255;
+                            image->donneesTab[x1][y1][RED] = red;
+							image->donneesTab[x1][y1][GREEN] = green;
+                            image->donneesTab[x1][y1][BLUE] = blue;
 							x1 = x1 + 1;
 							if(x1 == x2) 
 							{
@@ -145,7 +182,9 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 						while(1) 
 						{  
 							// déplacements verticaux
-							image->donneesTab[x1][y1][GREEN] = 255;
+                            image->donneesTab[x1][y1][RED] = red;
+							image->donneesTab[x1][y1][GREEN] = green;
+                            image->donneesTab[x1][y1][BLUE] = blue;
 							y1 = y1 - 1;
 							if(y1 == y2) 
 							{
@@ -166,7 +205,9 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 				// vecteur horizontal vers la droite
 				do 
 				{
-					image->donneesTab[x1][y1][GREEN] = 255;
+                    image->donneesTab[x1][y1][RED] = red;
+                    image->donneesTab[x1][y1][GREEN] = green;
+                    image->donneesTab[x1][y1][BLUE] = blue;
 					x1 = x1 + 1;
 				}while (x1 < x2);
 			}
@@ -188,7 +229,9 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 						dy = dy * 2;  
 						while(1) 
 						{  // déplacements horizontaux
-							image->donneesTab[x1][y1][GREEN] = 255;
+                            image->donneesTab[x1][y1][RED] = red;
+							image->donneesTab[x1][y1][GREEN] = green;
+                            image->donneesTab[x1][y1][BLUE] = blue;
 							x1 = x1 - 1;
 							if(x1 == x2) 
 							{
@@ -211,7 +254,9 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 						while(1) 
 						{
 							// déplacements verticaux
-							image->donneesTab[x1][y1][GREEN] = 255;
+                            image->donneesTab[x1][y1][RED] = red;
+							image->donneesTab[x1][y1][GREEN] = green;
+                            image->donneesTab[x1][y1][BLUE] = blue;
 							y1 = y1 + 1;
 							if(y1 == y2) 
 							{
@@ -239,7 +284,9 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 						while(1) 
 						{  
 							// déplacements horizontaux
-							image->donneesTab[x1][y1][GREEN] = 255;
+                            image->donneesTab[x1][y1][RED] = red;
+							image->donneesTab[x1][y1][GREEN] = green;
+                            image->donneesTab[x1][y1][BLUE] = blue;
 							x1 = x1 - 1;
 							if(x1 == x2) 
 							{
@@ -262,7 +309,9 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 						while(1) 
 						{  
 							// déplacements verticaux
-							image->donneesTab[x1][y1][GREEN] = 255;
+                            image->donneesTab[x1][y1][RED] = red;
+							image->donneesTab[x1][y1][GREEN] = green;
+                            image->donneesTab[x1][y1][BLUE] = blue;
 							y1 = y1 - 1;
 							if(y1 == y2) 
 							{
@@ -284,7 +333,9 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 				// vecteur horizontal vers la gauche
 				do 
 				{
-					image->donneesTab[x1][y1][GREEN] = 255;
+                    image->donneesTab[x1][y1][RED] = red;
+                    image->donneesTab[x1][y1][GREEN] = green;
+                    image->donneesTab[x1][y1][BLUE] = blue;
 					x1 = x1 - 1;
 				}while(x1 > x2);
 			}
@@ -300,7 +351,9 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 				// vecteur vertical croissant
 				do 
 				{
-					image->donneesTab[x1][y1][GREEN] = 255;
+                    image->donneesTab[x1][y1][RED] = red;
+                    image->donneesTab[x1][y1][GREEN] = green;
+                    image->donneesTab[x1][y1][BLUE] = blue;
 					y1 = y1 + 1;
 				}while(y1 < y2);
 			}
@@ -310,11 +363,15 @@ void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2)
 				// vecteur vertical décroissant
 				do 
 				{
-					image->donneesTab[x1][y1][GREEN] = 255;
+                    image->donneesTab[x1][y1][RED] = red;
+                    image->donneesTab[x1][y1][GREEN] = green;
+                    image->donneesTab[x1][y1][BLUE] = blue;
 					y1 = y1 - 1;
 				}while(y1 > y2);
 			}
 		}
 	}
-	image->donneesTab[x2][y2][GREEN] = 255;
+    image->donneesTab[x1][y1][RED] = red;
+    image->donneesTab[x1][y1][GREEN] = green;
+    image->donneesTab[x1][y1][BLUE] = blue;
  }
