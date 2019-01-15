@@ -153,7 +153,7 @@ DonneesImageRGB* createImageRoad(road* myRoad)
             }
         }
 
-        printLine(myImageRoad, previousWidth, previousHeight, currentWidth, currentHeight);
+        printLine(myImageRoad, previousWidth, previousHeight, currentWidth, currentHeight, 0, 0, 0);
 
         previousWidth = currentWidth;
         previousHeight = currentHeight;
