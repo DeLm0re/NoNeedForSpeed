@@ -14,25 +14,6 @@
 
 int main(void)
 {
-	srand((unsigned)(time(0)));
-
-	road *myRoad = NULL;
-
-	DonneesImageRGB *myImageRoad = NULL;
-
-	myRoad = createRoad(LENGHT_ROAD, 0);
-
-	generateStepsRoad(myRoad);
-
-	printfRoad(myRoad);
-
-	myImageRoad = createImageRoad(myRoad);
-
-	ecrisBMPRGB_Dans(myImageRoad, "roadSteps.bmp");
-
-	freeRoad(&myRoad);
-
-	libereDonneesImageRGB(&myImageRoad);
-
+  srand(NULL);
 	return 0;
 }
