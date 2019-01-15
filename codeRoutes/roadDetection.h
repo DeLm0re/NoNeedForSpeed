@@ -1,5 +1,5 @@
 #include "region.h"
 
-Point* getRoadPoint(DonneesImage* tabImage);
+Point* getRoadPoint(DonneesImageTab* tabImage);
 
 Point* getCrossingPoint(Line* line1, Line* line2);

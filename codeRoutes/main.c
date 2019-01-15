@@ -1,3 +1,4 @@
+
 //General header files
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,23 +11,59 @@
 #include <stdbool.h>
 
 //Header file
-#include "road.h"
+#include "roadDetection.h"
 
-int main(void)
+int main(int argc, char** argv)
 {
-	srand((unsigned)(time(0)));
+	//Initialize random with a seed
+	printf("Initializing random with a seed\n");
+	srand(10495854);
+	
 
-	road *myRoad = NULL;
+	// We get the image we will use for the test
+	printf("Reading the image\n");
+	DonneesImageRGB* image = NULL;
+	if (argc != 2)
+	{
+		image = lisBMPRGB("test.bmp");
+	}
+	else
+	{
+		image = lisBMPRGB(argv[1]);
+	}
+	if (image != NULL)
+	{
+	    
+	    /////////////////////////
+	    //--- preprocessing ---//
+	    /////////////////////////
+	    
+		printf("Creating a matrice of pixels from the image\n");
+		DonneesImageTab* tabImage = RGBToTab(image);
+		
+		///////////////////////////
+	    //--- point detection ---//
+	    ///////////////////////////
 
-	myRoad = createRoad(LENGTH_ROAD, 0);
-
-	generateStepsRoad(myRoad);
-
-	printRoad(myRoad);
-
-	ecrisBMPRGB_Dans(createImageRoad(myRoad), "roadSteps.bmp");
-
-	freeRoad(&myRoad);
-
+        Point* point = getRoadPoint(tabImage);
+        printf(" Crossing point found : (%d, %d)\n", point->x, point->y);
+		
+		/////////////////////////////
+	    //--- memory liberation ---//
+	    /////////////////////////////
+	    
+		printf("Freeing the memory\n");
+		libereDonneesImageRGB(&image);
+		
+		libereDonneesTab(&tabImage);
+		
+		free(point);
+		
+	}
+	else
+	{
+		printf("Error : Can't read the image\n");
+	}
+	printf("---Done\n");
 	return 0;
 }

@@ -1,8 +1,33 @@
 #include "roadDetection.h"
 
-Point* getRoadPoint(DonneesImage* tabImage)
+Point* getRoadPoint(DonneesImageTab* tabImage)
 {
-
+    // We create the hough transform of the image
+	DonneesImageTab* tabHough = createHough(tabImage, 200, 720);
+	printf(" Edit it so it is easier to use\n");
+    // Making every point black or white
+	cutBetweenLevel(tabHough, 80, 255);
+	cutBetweenLevel(tabHough, 0, 80);
+	// Making sure to have a blob around each point to find the regions easily with a dillatation filter
+	applyDillatationFilter(tabHough, 200);
+	
+	// We find each point on the hough transform by finding regions using the bottom up method
+	DonneesImageTab* tabRegionHough = initTabRegion(tabHough->largeurImage, tabHough->hauteurImage);
+	IdRegions* idRegionsHough = findAllRegionBottomUp(tabHough, tabRegionHough, 200);
+	
+	// We find the two border lines of the road
+	Line* line1 = getCenterLineFromRegion(tabHough, tabRegionHough, idRegionsHough->regions[1], 0);
+	Line* line2 = getCenterLineFromRegion(tabHough, tabRegionHough, idRegionsHough->regions[2], 0);
+	
+	// We find the point where the line cross
+	Point* point = getCrossingPoint(line1, line2);
+	
+	libereDonneesTab(&tabHough);
+	libereDonneesTab(&tabRegionHough);
+	destructIdRegions(&idRegionsHough);
+	free(line1);
+	free(line2);
+    return point;
 }
 
 Point* getCrossingPoint(Line* line1, Line* line2)
@@ -18,7 +43,7 @@ Point* getCrossingPoint(Line* line1, Line* line2)
 	if (angle1 != 0)
 	{
 	    m1 = tan(angle1 - M_PI/2);
-	    n1 = radius / sin(angle1);
+	    n1 = radius1 / sin(angle1);
 	}
 	else
 	{
@@ -32,7 +57,7 @@ Point* getCrossingPoint(Line* line1, Line* line2)
 	if (angle2 != 0)
 	{
 	    m2 = tan(angle2 - M_PI/2);
-	    n2 = radius / sin(angle2);
+	    n2 = radius2 / sin(angle2);
 	}
 	else
 	{
