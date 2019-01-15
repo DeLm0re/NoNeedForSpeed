@@ -1,10 +1,10 @@
-#include "image.h"
+#include "roadDetection.h"
 
-typedef struct car
+typedef struct Car
 {
     int abscissa;
-    int directionAngle;
-}car;
+    float directionAngle;
+}Car;
 
 /* @function
  *      Creates an image that shows the road from
@@ -20,7 +20,7 @@ typedef struct car
  *
  * @return  :   pointer on the DonneesImageTab created
  */
-DonneesImageTab *createRoadImage(int horizonAbs, int horizonOrd, car carPosition, int horizonHeight, int roadWidth, int imageSize);
+DonneesImageTab *createRoadImage(int horizonAbs, int horizonOrd, Car carPosition, int horizonHeight, int roadWidth, int imageSize);
 
 
 /* @function

@@ -14,7 +14,7 @@
  * 
  * @return  :   pointer on the DonneesImageTab created
  */
-DonneesImageTab *createRoadImage(int horizonAbs, int horizonOrd, car carPosition, int horizonHeight, int roadWidth, int imageSize)
+DonneesImageTab *createRoadImage(int horizonAbs, int horizonOrd, Car carPosition, int horizonHeight, int roadWidth, int imageSize)
 {
     //Image of the road
     DonneesImageTab *image = initTab(imageSize, imageSize);
