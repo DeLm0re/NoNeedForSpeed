@@ -14,11 +14,19 @@
 
 int main(void)
 {
-<<<<<<< HEAD
 	srand((unsigned)(time(0)));
 
-=======
-  srand(NULL);
->>>>>>> master
+	road *myRoad = NULL;
+
+	myRoad = createRoad(LENGTH_ROAD, 0);
+
+	generateStepsRoad(myRoad);
+
+	printRoad(myRoad);
+
+	ecrisBMPRGB_Dans(createImageRoad(myRoad), "roadSteps.bmp");
+
+	freeRoad(&myRoad);
+
 	return 0;
 }
