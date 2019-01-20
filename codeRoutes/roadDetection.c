@@ -47,7 +47,11 @@ Point* getRoadPoint(DonneesImageTab* tabImage)
 	// We find the point where the line cross
 	Point* point = getCrossingPoint(lineLeft, lineRight);
 	
-	/*updateLineInfo(tabImage, lineLeft, 200);
+	///////////////////////////////
+	//--- debug visualization ---//
+    ///////////////////////////////
+
+	updateLineInfo(tabImage, lineLeft, 200);
 	traceLineOnImage(tabImage, lineLeft, 255, 0, 0);
 	updateLineInfo(tabImage, lineRight, 200);
 	traceLineOnImage(tabImage, lineRight, 0, 255, 0);
@@ -55,7 +59,7 @@ Point* getRoadPoint(DonneesImageTab* tabImage)
 	tabImage->donneesTab[point->x+1][point->y][BLUE] = 255;
 	tabImage->donneesTab[point->x-1][point->y][BLUE] = 255;
 	tabImage->donneesTab[point->x][point->y+1][BLUE] = 255;
-	tabImage->donneesTab[point->x][point->y-1][BLUE] = 255;*/
+	tabImage->donneesTab[point->x][point->y-1][BLUE] = 255;
 	
 	libereDonneesTab(&tabHough);
 	libereDonneesTab(&tabRegionHough);
