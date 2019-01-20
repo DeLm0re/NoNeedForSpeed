@@ -48,8 +48,7 @@ int main(int argc, char** argv)
 	// Create an image to see how the road looks like
 	DonneesImageRGB* imageRoad = createImageRoad(myRoad);
 	// We create the BMP image of the previsualisation of the road
-	ecrisBMPRGB_Dans(imageRoad, "0 - road.bmp");
-	
+	ecrisBMPRGB_Dans(imageRoad, "visualization/0 - road.bmp");
 	
 	/////////////////////////
 	//--- step creation ---//
@@ -75,7 +74,7 @@ int main(int argc, char** argv)
 	    // We reset the path of the step visualization image
 	    strcpy(pathStepImage, "");
 	    // We create the new one
-	    sprintf(pathStepImage, "%d - step.bmp", i+1);
+	    sprintf(pathStepImage, "visualization/%d - step.bmp", i+1);
 	    // We convert the visualization to a DonneesImageRGB to then create a .BMP image
 	    imageStep = tabToRGB(stepTab);
 	    ecrisBMPRGB_Dans(imageStep, pathStepImage);
@@ -87,15 +86,10 @@ int main(int argc, char** argv)
 	    // We estimate where the road crosses
 	    guessedCrossingPoint = getRoadPoint(stepTabGradiant);
 	    
-	    imageStep = tabToRGB(stepTabGradiant);
-	    strcpy(pathStepImage, "");
-	    sprintf(pathStepImage, "%d - visu.bmp", i+1);
-	    ecrisBMPRGB_Dans(imageStep, pathStepImage);
-	    
 	    // We visualize what point we found
         printf(" Crossing abscissa found : %d\n", guessedCrossingPoint->x);
         // We shift the position of the car, relative to how much he shifted from the objective
-        carPosition.abscissa += (guessedCrossingPoint->x - horizonPointAbscissa); // if their is no mistakes, the car stay centered
+        carPosition.abscissa = imageSize/2 + (guessedCrossingPoint->x - horizonPointAbscissa); // if their is no mistakes, the car stay centered
         // We visualize the new abscissa
         printf(" New car abscissa : %d\n", carPosition.abscissa);
         

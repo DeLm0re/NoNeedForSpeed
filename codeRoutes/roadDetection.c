@@ -47,20 +47,6 @@ Point* getRoadPoint(DonneesImageTab* tabImage)
 	// We find the point where the line cross
 	Point* point = getCrossingPoint(lineLeft, lineRight);
 	
-	///////////////////////////////
-	//--- debug visualization ---//
-    ///////////////////////////////
-
-	updateLineInfo(tabImage, lineLeft, 200);
-	traceLineOnImage(tabImage, lineLeft, 255, 0, 0);
-	updateLineInfo(tabImage, lineRight, 200);
-	traceLineOnImage(tabImage, lineRight, 0, 255, 0);
-	tabImage->donneesTab[point->x][point->y][BLUE] = 255;
-	tabImage->donneesTab[point->x+1][point->y][BLUE] = 255;
-	tabImage->donneesTab[point->x-1][point->y][BLUE] = 255;
-	tabImage->donneesTab[point->x][point->y+1][BLUE] = 255;
-	tabImage->donneesTab[point->x][point->y-1][BLUE] = 255;
-	
 	libereDonneesTab(&tabHough);
 	libereDonneesTab(&tabRegionHough);
 	destructIdRegions(&idRegionsHough);
@@ -79,7 +65,7 @@ Point* getCrossingPoint(Line* line1, Line* line2)
 	    float radius1, radius2;
         float m1, m2, n1, n2;
 
-        maxR1 = line1->maxAngularIndex/2;
+        maxR1 = line1->maxRIndex/2;
 	    angle1 = nmap(line1->angularIndex, 0, line1->maxAngularIndex-1, 0, M_PI);
 	    radius1 = nmap(line1->rIndex, 0, line1->maxRIndex-1, -maxR1, maxR1);
 	    if (angle1 != 0)
@@ -93,7 +79,7 @@ Point* getCrossingPoint(Line* line1, Line* line2)
 	        n1 = NAN;
 	    }
 	
-	    maxR2 = line2->maxAngularIndex/2;
+	    maxR2 = line2->maxRIndex/2;
 	    angle2 = nmap(line2->angularIndex, 0, line2->maxAngularIndex-1, 0, M_PI);
 	    radius2 = nmap(line2->rIndex, 0, line2->maxRIndex-1, -maxR2, maxR2);
 	    if (angle2 != 0)
