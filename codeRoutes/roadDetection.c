@@ -1,9 +1,9 @@
 #include "roadDetection.h"
 
-Point* getRoadPoint(DonneesImageTab* tabImage)
+Point* getRoadPoint(DonneesImageTab* tabImageGradiant)
 {
     // We create the hough transform of the image
-	DonneesImageTab* tabHough = createHough(tabImage, 200, 720);
+	DonneesImageTab* tabHough = createHough(tabImageGradiant, 200, 720);
     // Making every point black or white
 	cutBetweenLevel(tabHough, 80, 255);
 	cutBetweenLevel(tabHough, 0, 80);
@@ -118,4 +118,23 @@ Point* getCrossingPoint(Line* line1, Line* line2)
 	    }
 	}
 	return point;
+}
+
+bool isOnTheRoad(int nextAbscissa, int roadWidth, int horizonPointAbscissa)
+{
+    // The road is always centered on the image
+    // So the amount of shift the car goes for the next movement is calculated from the horizon point where the road cross.
+    // So it is the difference between the center point of the road (horizonPointAbscissa) and the targeted point of the car (nextAbscissa)
+    int totalShift = nextAbscissa - horizonPointAbscissa;
+    // If we shift less than half the size of the road
+    if (-roadWidth/2 < totalShift && totalShift < roadWidth/2)
+    {
+        // Then we are still on the road
+        return true;
+    }
+    else
+    {
+        // Otherwise, we are not
+        return false;
+    }
 }

@@ -12,14 +12,14 @@
  */
 float angleTrajectory(float heightHorizon, float abscisseArrival, float abscisseCar)
 {
-	//		   . <--- point of arrival in the horizon line
-	//         |\
-	//opposite>| \
-	//		   |  \_   
-	//2pi _____|___\_\<-angleTrajectory_____ 0 
-	//           ^ ^ 
-	//  adjacent_| |
-	//             |_point of the car's position
+	/*		 . <--- point of arrival in the horizon line
+	         |\
+	opposite>| \
+			 |  \_   
+	2pi _____|___\_\<-angleTrajectory_____ 0 
+	         ^ ^ 
+	adjacent_| |
+	           |_point of the car's position*/
 	
 	float adjacent, opposite, angleTrajectory ; 
 	

@@ -29,19 +29,19 @@ DonneesImageTab *createRoadImage(int horizonAbs, int horizonOrd, Car carPosition
     }
 
     //Print the road
-    for(index = imageSize/roadWidth; index < imageSize - (imageSize/roadWidth); index++)
+    for(index = imageSize/2 - roadWidth/2; index < imageSize/2 + roadWidth/2; index++)
     {
         printLine(image, horizonAbs, horizonOrd, index, 0, 64, 64, 64);
     }
 
     //Print the road left line
-    for(index = imageSize/roadWidth; index < imageSize/roadWidth + (imageSize/20); index++)
+    for(index = imageSize/2 - roadWidth/2; index < imageSize/2 - roadWidth/2 + (roadWidth/20); index++)
     {
         printLine(image, horizonAbs, horizonOrd, index, 0, 192, 192, 192);
     }
     
     //Print the road right line
-    for(index = imageSize - (imageSize / roadWidth); index > imageSize - (imageSize / roadWidth) - (imageSize/20); index--)
+    for(index = imageSize/2 + roadWidth/2; index > imageSize/2 + roadWidth/2 - (roadWidth/20); index--)
     {
         printLine(image, horizonAbs, horizonOrd, index, 0, 192, 192, 192);
     }
