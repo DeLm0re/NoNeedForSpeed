@@ -15,7 +15,7 @@ typedef struct Car
  *      int horizonOrd  :   ordinate of the horizon point
  *      car carPosition :   position of the car
  *      int horizonHeight :   height of the horizonLine
- *      int roadWidth   :   width of the road in fraction of the imageSize (3 for 1/3 of the image)
+ *      int roadWidth   :   width of the road
  *      int imageSize   :   size of a side of the square image
  *
  * @return  :   pointer on the DonneesImageTab created
