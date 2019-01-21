@@ -1,5 +1,19 @@
 #include "roadDetection.h"
 
+/* @definition
+ *      Color of the background of the sprite
+ *      that will not be displayed, for transparency
+ */
+#define SPRITE_BACKGROUND_R 255
+#define SPRITE_BACKGROUND_G 66
+#define SPRITE_BACKGROUND_B 128
+
+/* @definition
+ *      Width of the sprite
+ *      used in createRoadImage to center the sprite
+ */
+#define SPRITE_WIDTH 50
+
 typedef struct Car
 {
     int abscissa;
@@ -39,3 +53,17 @@ DonneesImageTab *createRoadImage(int horizonAbs, int horizonOrd, Car carPosition
  * @return  :   \
  */
 void printLine(DonneesImageTab *image, int x1, int y1, int x2, int y2, int red, int green, int blue);
+
+
+/* @function
+ *      Print a sprite on an image
+ * 
+ * @param
+ *      char *spriteName    :   path and name of the sprite
+ *      DonneesImageTab *image  :   image to modify
+ *      int spriteAbs   :   abscissa of the sprite (bottom left point)
+ *      int spriteOrd   :   ordinate of the sprite (bottom left point)
+ * 
+ * @return  :   \
+ */
+void printSprite(char *spriteName, DonneesImageTab *image, int spriteAbs, int spriteOrd);

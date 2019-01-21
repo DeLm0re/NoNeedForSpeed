@@ -58,13 +58,62 @@ DonneesImageTab *createRoadImage(int horizonAbs, int horizonOrd, Car carPosition
     image->donneesTab[horizonAbs][horizonOrd][RED] = 255;
 
     //Print the car
-    if (0 <= carPosition.abscissa && carPosition.abscissa < imageSize)
-    {
-        image->donneesTab[carPosition.abscissa][0][RED] = 255;
-    }
+    printSprite("sprites/car.bmp", image, carPosition.abscissa - (SPRITE_WIDTH / 2), 0);
     
     return image;
 }
+
+
+
+/* @function
+ *      Print a sprite on an image
+ * 
+ * @param
+ *      char *spriteName    :   path and name of the sprite
+ *      DonneesImageTab *image  :   image to modify
+ *      int spriteAbs   :   abscissa of the sprite (bottom left point)
+ *      int spriteOrd   :   ordinate of the sprite (bottom left point)
+ * 
+ * @return  :   \
+ */
+void printSprite(char *spriteName, DonneesImageTab *image, int spriteAbs, int spriteOrd)
+{
+    //Get the sprite tab
+    DonneesImageRGB *bmpSprite = lisBMPRGB(spriteName);
+    DonneesImageTab *sprite = RGBToTab(bmpSprite);
+
+    //Browse the sprite
+    int absIndex, ordIndex;
+    for(absIndex = 0; absIndex < sprite->largeurImage; absIndex++)
+    {
+        for(ordIndex = 0; ordIndex < sprite->hauteurImage; ordIndex++)
+        {
+            //Coordinates of the pixel in the image
+            int realAbs = absIndex + spriteAbs;
+            int realOrd = ordIndex + spriteOrd;
+
+            //Check if in the image
+            if(realAbs >= 0 && realAbs < image->largeurImage 
+                && realOrd >= 0 && realOrd < image->hauteurImage )
+            {
+                int spriteR = sprite->donneesTab[absIndex][ordIndex][RED];
+                int spriteG = sprite->donneesTab[absIndex][ordIndex][GREEN];
+                int spriteB = sprite->donneesTab[absIndex][ordIndex][BLUE];
+
+                //Check if not background color
+                if(spriteR != SPRITE_BACKGROUND_R && spriteG != SPRITE_BACKGROUND_G 
+                    && spriteB != SPRITE_BACKGROUND_B)
+                {
+                    image->donneesTab[realAbs][realOrd][RED] = spriteR;
+                    image->donneesTab[realAbs][realOrd][GREEN] = spriteG;
+                    image->donneesTab[realAbs][realOrd][BLUE] = spriteB;
+                }
+            }
+        }
+    }
+}
+
+
 
 /* @function
  *      Print a line on a DonneesImageTab
