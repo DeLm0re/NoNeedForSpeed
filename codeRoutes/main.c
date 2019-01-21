@@ -12,6 +12,7 @@
 
 //Header file
 #include "road.h"
+#include "trajectory.h"
 
 
 int main(int argc, char** argv)
@@ -64,11 +65,10 @@ int main(int argc, char** argv)
 	{
 	    // We show what step we currently are
 	    printf("Step %d\n", i + 1);
-	    // We create the image that the driver see, using the road
-	    //      We need to change the rand() to what vincent did
-	    horizonPointAbscissa = rand()%(imageSize-200) + 100; // We get where the road is going using the information we have from the road
+	    // We calculate where the point will be, based on the road
+	    horizonPointAbscissa = abscisseTrajectory(horizonPointOrdinate, myRoad->values[i], horizonOrdinate);
 	    // We visualize where the road go
-	    printf(" Road corssing abscissa : %d\n", horizonPointAbscissa);
+	    printf(" Road crossing abscissa : %d\n", horizonPointAbscissa);
 	    stepTab = createRoadImage(horizonPointAbscissa, horizonPointOrdinate, carPosition, horizonOrdinate, 4, imageSize);
 	    
 	    // We reset the path of the step visualization image

@@ -4,6 +4,9 @@
 #include <math.h>
 #include <stdlib.h>
 
+#ifndef M_PI
+	#define M_PI 3.14159265358979323846
+#endif
 
 /* @fonction		:	Return the angle in radian of the car's trajectory from the horizon point and the positin of the car
  *						
