@@ -157,6 +157,7 @@ DonneesImageRGB* createImageRoad(road* myRoad)
         previousWidth = currentWidth;
         previousHeight = currentHeight;
     }
-
-    return(tabToRGB(myImageRoad));
+    DonneesImageRGB* finalImageRoad = tabToRGB(myImageRoad);
+    libereDonneesTab(&myImageRoad);
+    return(finalImageRoad);
 }

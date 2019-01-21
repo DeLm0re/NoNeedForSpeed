@@ -4,7 +4,6 @@ Point* getRoadPoint(DonneesImageTab* tabImage)
 {
     // We create the hough transform of the image
 	DonneesImageTab* tabHough = createHough(tabImage, 200, 720);
-	printf(" Edit it so it is easier to use\n");
     // Making every point black or white
 	cutBetweenLevel(tabHough, 80, 255);
 	cutBetweenLevel(tabHough, 0, 80);
@@ -14,57 +13,36 @@ Point* getRoadPoint(DonneesImageTab* tabImage)
 	// We find each point on the hough transform by finding regions using the bottom up method
 	DonneesImageTab* tabRegionHough = initTabRegion(tabHough->largeurImage, tabHough->hauteurImage);
 	IdRegions* idRegionsHough = findAllRegionBottomUp(tabHough, tabRegionHough, 200);
-	printf("line found : %d\n", idRegionsHough->size-1);
 	
 	// We find the two border lines of the road
 	int i;
 	Line* tempLine = NULL;
-	
-	// First the left one
-	Line* lineLeft = NULL;
+
+    // Use to store what lines are the rightest and leftest one
+	int lineLeftIndex = -1;
+	int lineRightIndex = -1;
+	int leftLineAngular = 0;
+	int rightLineAngular = tabHough->largeurImage;
+	// We search what are the rightest and leftest lines
 	for(i = 1; i < idRegionsHough->size; i++)
 	{
 	    tempLine = getCenterLineFromRegion(tabHough, tabRegionHough, idRegionsHough->regions[i], 0);
-	    if (lineLeft == NULL)
+	    if (tempLine->angularIndex < rightLineAngular)
 	    {
-	        lineLeft = tempLine;
-	        tempLine = NULL;
+	        lineRightIndex = i;
+	        rightLineAngular = tempLine->angularIndex;
 	    }
-	    else if (tempLine->angularIndex > lineLeft->angularIndex)
+	    if (tempLine->angularIndex > leftLineAngular)
 	    {
-	        free(lineLeft);
-	        lineLeft = tempLine;
-	        tempLine = NULL;
+	        lineLeftIndex = i;
+	        leftLineAngular = tempLine->angularIndex;
 	    }
-	    
-	    if (tempLine != NULL)
-	    {
-	        free(tempLine);
-	    }
+	    free(tempLine);
+	    tempLine = NULL;
 	}
-	
-	// Then the right one
-	Line* lineRight = NULL;
-	for(i = 1; i < idRegionsHough->size; i++)
-	{
-	    tempLine = getCenterLineFromRegion(tabHough, tabRegionHough, idRegionsHough->regions[i], 0);
-	    if (lineRight == NULL)
-	    {
-	        lineRight = tempLine;
-	        tempLine = NULL;
-	    }
-	    else if (tempLine->angularIndex < lineRight->angularIndex)
-	    {
-	        free(lineRight);
-	        lineRight = tempLine;
-	        tempLine = NULL;
-	    }
-	    
-	    if (tempLine != NULL)
-	    {
-	        free(tempLine);
-	    }
-	}
+	// Once we found them, we save them
+	Line* lineLeft = getCenterLineFromRegion(tabHough, tabRegionHough, idRegionsHough->regions[lineLeftIndex], 0);
+	Line* lineRight = getCenterLineFromRegion(tabHough, tabRegionHough, idRegionsHough->regions[lineRightIndex], 0);
 	
 	// We find the point where the line cross
 	Point* point = getCrossingPoint(lineLeft, lineRight);
@@ -87,7 +65,7 @@ Point* getCrossingPoint(Line* line1, Line* line2)
 	    float radius1, radius2;
         float m1, m2, n1, n2;
 
-        maxR1 = line1->maxAngularIndex/2;
+        maxR1 = line1->maxRIndex/2;
 	    angle1 = nmap(line1->angularIndex, 0, line1->maxAngularIndex-1, 0, M_PI);
 	    radius1 = nmap(line1->rIndex, 0, line1->maxRIndex-1, -maxR1, maxR1);
 	    if (angle1 != 0)
@@ -101,7 +79,7 @@ Point* getCrossingPoint(Line* line1, Line* line2)
 	        n1 = NAN;
 	    }
 	
-	    maxR2 = line2->maxAngularIndex/2;
+	    maxR2 = line2->maxRIndex/2;
 	    angle2 = nmap(line2->angularIndex, 0, line2->maxAngularIndex-1, 0, M_PI);
 	    radius2 = nmap(line2->rIndex, 0, line2->maxRIndex-1, -maxR2, maxR2);
 	    if (angle2 != 0)

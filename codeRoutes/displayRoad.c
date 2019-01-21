@@ -58,7 +58,10 @@ DonneesImageTab *createRoadImage(int horizonAbs, int horizonOrd, Car carPosition
     image->donneesTab[horizonAbs][horizonOrd][RED] = 255;
 
     //Print the car
-    image->donneesTab[carPosition.abscissa][0][RED] = 255;
+    if (0 <= carPosition.abscissa && carPosition.abscissa < imageSize)
+    {
+        image->donneesTab[carPosition.abscissa][0][RED] = 255;
+    }
     
     return image;
 }
