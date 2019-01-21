@@ -101,8 +101,8 @@ void printSprite(char *spriteName, DonneesImageTab *image, int spriteAbs, int sp
                 int spriteB = sprite->donneesTab[absIndex][ordIndex][BLUE];
 
                 //Check if not background color
-                if(spriteR != SPRITE_BACKGROUND_R && spriteG != SPRITE_BACKGROUND_G 
-                    && spriteB != SPRITE_BACKGROUND_B)
+                if(spriteR != SPRITE_BACKGROUND_R || spriteG != SPRITE_BACKGROUND_G 
+                    || spriteB != SPRITE_BACKGROUND_B)
                 {
                     image->donneesTab[realAbs][realOrd][RED] = spriteR;
                     image->donneesTab[realAbs][realOrd][GREEN] = spriteG;
