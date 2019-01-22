@@ -1,6 +1,7 @@
 // Faire des putain de liste chainé pour les regions
 
 #include "image.h"
+#include <string.h>
 
 #ifndef BORDER
 	#define BORDER -1
@@ -49,3 +50,5 @@ IdRegions* findAllRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tab
 IdRegion* whatIsNeighboorsColor(DonneesImageTab* tabRegion, int x, int y);
 
 DonneesImageTab* getShape(DonneesImageTab* tabRegion,  IdRegion* idRegion);
+
+void writeAllRegion(DonneesImageTab *imageRegion, IdRegions *allRegions);

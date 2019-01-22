@@ -367,3 +367,25 @@ DonneesImageTab* getShape(DonneesImageTab* tabRegion,  IdRegion* idRegion)
 	}
 	return tabShape;
 }
+
+void writeAllRegion(DonneesImageTab *imageRegion, IdRegions *allRegions)
+{
+	int index;
+	int increment = 1;
+	char bufferName[20];
+	char totalBuffer[20];
+
+	for(index = 0; index < allRegions->size; index++)
+	{
+		sprintf(bufferName, "%d", increment);
+		strcat(bufferName, "_e.bmp");
+		strcpy(totalBuffer, "./regions/");
+		strcat(totalBuffer, bufferName);
+
+		ecrisBMPRGB_Dans( tabToRGB(getShape(imageRegion, allRegions->regions[index])), totalBuffer);
+
+		increment++;
+		strcpy(bufferName, "");
+		strcpy(totalBuffer, "");
+	}
+}
