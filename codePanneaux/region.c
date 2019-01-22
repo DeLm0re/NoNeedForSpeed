@@ -58,7 +58,7 @@ void destructIdRegions(IdRegions** idRegions)
 			}
 			free((*idRegions)->regions);
 			free(*idRegions);
-			
+
 			*idRegions = NULL;
 		}
 	}
@@ -68,7 +68,7 @@ IdRegion* findRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tabRegi
 {
 	IdRegion* idRegion = NULL;
 	// If the seed is in the image
-	if (0 <= x && x < tabRegion->largeurImage && 
+	if (0 <= x && x < tabRegion->largeurImage &&
 		0 <= y && y < tabRegion->hauteurImage)
 	{
 		// We save the red, blue and green value of the seed
@@ -100,8 +100,8 @@ IdRegion* findRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tabRegi
 					{
 						// We calculate the distance (in colors) between the current pixel and the seed
 						tempColor = sqrt(
-							pow(tabImage->donneesTab[i][j][BLUE] - idRegion->blue, 2) + 
-							pow(tabImage->donneesTab[i][j][GREEN] - idRegion->green, 2) + 
+							pow(tabImage->donneesTab[i][j][BLUE] - idRegion->blue, 2) +
+							pow(tabImage->donneesTab[i][j][GREEN] - idRegion->green, 2) +
 							pow(tabImage->donneesTab[i][j][RED] - idRegion->red, 2));
 						// If it is the a color close enought (distance inferior to the sensibility)
 						if(tempColor < sensibility)
@@ -118,7 +118,7 @@ IdRegion* findRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tabRegi
 								for(l = -1; l <= 1; l++)
 								{
 									// If they have not been checked yet and if they are in the bounderies
-									if (0 <= i + k && i + k < tabRegion->largeurImage && 
+									if (0 <= i + k && i + k < tabRegion->largeurImage &&
 										0 <= j + l && j + l < tabRegion->hauteurImage &&
 										tabRegion->donneesTab[i + k][j + l][BLUE] == UNCHECKED &&
 										tabRegion->donneesTab[i + k][j + l][GREEN] == UNCHECKED &&
@@ -137,7 +137,7 @@ IdRegion* findRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tabRegi
 			}
 		// We ontinue until their is no point left to check
 		}while (borderFind > 0);
-		
+
 		// For each pixels and colors, we set the remaining pixel with a BORDER value to an UNCHECKED value
 		//(used if we need to add other region on this matrice)
 		int cIndex;
@@ -171,7 +171,7 @@ IdRegions* findAllRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tab
 	int label = 0;
 	// Use to know the number of region found
 	int nbrRegion = 0;
-	
+
 	// For each pixels
 	for (i = 0; i < tabRegion->largeurImage; i++)
 	{
@@ -188,7 +188,7 @@ IdRegions* findAllRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tab
 				label+=10;
 				// We say that we find one more region
 				nbrRegion++;
-				
+
 				// If we can save it in idRegions
 				if (idRegions->size >= nbrRegion)
 				{
@@ -218,7 +218,7 @@ IdRegions* findAllRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tab
 					}
 					// And we destruct the temporary IdRegions
 					destructIdRegions(&tempIdRegions);
-					
+
 					// Finaly, we add the found region
 					idRegions->regions[nbrRegion - 1] = tempIdRegion;
 				}
@@ -226,132 +226,6 @@ IdRegions* findAllRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tab
 		}
 	}
 	// And we return the list of idRegion
-	return idRegions;
-}
-
-IdRegions* findRegionFlow(DonneesImageTab* tabImage, DonneesImageTab* tabRegion, int sensibility)
-{
-	int i, j;
-	int k;
-	// We find the max color norm value in the tabImage
-	int max = 0;
-	int colorNorm;
-	for (i = 0; i < tabImage->largeurImage; i++)
-	{
-		for (j = 0; j < tabImage->hauteurImage; j++)
-		{
-			colorNorm = pow(tabImage->donneesTab[i][j][BLUE], 2) + 
-				pow(tabImage->donneesTab[i][j][GREEN], 2) +
-				pow(tabImage->donneesTab[i][j][RED], 2);
-			if (colorNorm > max)
-			{
-				max = colorNorm;
-			}
-		}
-	}
-	
-	// We initialize the flowLevel 
-	int flowLevel = sqrt(max);
-	// The label wich will be use to set the regions
-	int label = 0;
-	// use to save all the idRegion
-	IdRegions* idRegions = initIdRegions(1);
-	IdRegions* tempIdRegions = NULL;
-	IdRegion* tempIdRegion = NULL;
-	int nbrRegion = 0;
-	// We start a first loop that will last until we flooded everything
-	while(flowLevel >= 0)
-	{
-		// For each pixels
-		for (i = 0; i < tabRegion->largeurImage; i++)
-		{
-			for (j = 0; j < tabRegion->hauteurImage; j++)
-			{
-				// We calculate the norm of the pixel
-				colorNorm = sqrt(pow(tabImage->donneesTab[i][j][BLUE], 2) + 
-					pow(tabImage->donneesTab[i][j][GREEN], 2) +
-					pow(tabImage->donneesTab[i][j][RED], 2));
-				// If we are in en empty pixel and if it is at the flow level
-				if (tabRegion->donneesTab[i][j][BLUE] == UNCHECKED &&
-					tabRegion->donneesTab[i][j][GREEN] == UNCHECKED &&
-					tabRegion->donneesTab[i][j][RED] == UNCHECKED &&
-					absValue(flowLevel - colorNorm) < sensibility)
-				{
-					// We check the color of the neighbours
-					tempIdRegion = whatIsNeighboorsColor(tabRegion, i, j);
-					// If didn't found any neighbours
-					if(tempIdRegion == NULL)
-					{
-						// We color the pixel with the label of a new region.
-						tabRegion->donneesTab[i][j][BLUE] = label;
-						tabRegion->donneesTab[i][j][GREEN] = label;
-						tabRegion->donneesTab[i][j][RED] = label;
-						// We initialize an idRegion if it as not been yet
-						if (tempIdRegion == NULL)
-						{
-							tempIdRegion = initIdRegion(
-								label,
-								label,
-								label,
-								-1,
-								-1,
-								label);
-						}
-						// We increase the total number of region found
-						nbrRegion++;
-						// If we can save it in idRegions
-						if (idRegions->size >= nbrRegion)
-						{
-							// We put it in the list of idRegion
-							idRegions->regions[nbrRegion - 1] = tempIdRegion;
-						}
-						// If not
-						else
-						{
-							// We realoc idRegions
-							// First by initializing an IdRegions which will be use to transfer the value
-							tempIdRegions = initIdRegions(nbrRegion);
-							// We copy everything into the previously initialized IdRegion
-							for(k = 0; k < idRegions->size; k++)
-							{
-								tempIdRegions->regions[k] = idRegions->regions[k];
-								idRegions->regions[k] = NULL;
-							}
-							// We reInitialize idRegions
-							destructIdRegions(&idRegions);
-							idRegions = initIdRegions(nbrRegion);
-							// Then, we put back all the value
-							for(k = 0; k < idRegions->size; k++)
-							{
-								idRegions->regions[k] = tempIdRegions->regions[k];
-								tempIdRegions->regions[k] = NULL;
-							}
-							// And we destruct the temporary IdRegions
-							destructIdRegions(&tempIdRegions);
-							
-							// Finaly, we add the found region
-							idRegions->regions[nbrRegion - 1] = tempIdRegion;
-						}
-						// Then we update the label for the next region
-						label = (label + 20)%255;
-						// And we say that the idRegion can be reuse
-						tempIdRegion = NULL;
-					}
-					// If we found a neighbours
-					else
-					{
-						// We color the pixel with the same label
-						tabRegion->donneesTab[i][j][BLUE] = tempIdRegion->blue;
-						tabRegion->donneesTab[i][j][GREEN] = tempIdRegion->green;
-						tabRegion->donneesTab[i][j][RED] = tempIdRegion->red;
-					}
-				}
-			}
-		}
-		// each loop, we lower the flood level
-		flowLevel--;
-	}
-	// In the end, we return the list of idRegion
 	return idRegions;
 }
 
@@ -382,165 +256,136 @@ IdRegion* whatIsNeighboorsColor(DonneesImageTab* tabRegion, int x, int y)
 	return idRegion;
 }
 
-Line* getCenterLineFromRegion(DonneesImageTab* tabHough, DonneesImageTab* tabRegion, IdRegion* idRegion, int sensibility)
+DonneesImageTab* getShape(DonneesImageTab* tabRegion,  IdRegion* idRegion)
 {
-    int i, j;
-	Line* centerLine = initLine(tabHough->hauteurImage, tabHough->largeurImage);
-	int nbrLine = 0;
-	int angular = 0;
-	int radius = 0;
-	// For each pixel in the Hough matrice
-	for(i = 0; i < tabHough->largeurImage; i++)
+	int i, j;
+	DonneesImageTab* tabShape = NULL;
+	bool isInRegion = false;;
+	// Getting the height of the region
+	int startY = tabRegion->hauteurImage; // the maximum Y coordinate wich contain the shape
+	int endY = -1; // the minimum Y coordinate wich contain the shape
+	for (i = 0; i < tabRegion->largeurImage; i++)
 	{
-		for(j = 0; j < tabHough->hauteurImage; j++)
+		isInRegion = false;
+		for (j = 0; j < tabRegion->hauteurImage; j++)
 		{
+			// If we are in the region
 			if (tabRegion->donneesTab[i][j][BLUE] == idRegion->label &&
-			    tabRegion->donneesTab[i][j][GREEN] == idRegion->label &&
-			    tabRegion->donneesTab[i][j][RED] == idRegion->label)
+				tabRegion->donneesTab[i][j][GREEN] == idRegion->label &&
+				tabRegion->donneesTab[i][j][RED] == idRegion->label)
 			{
-				nbrLine++;
-				angular += i;
-				radius += j;
-			}
-		}
-	}
-	centerLine->angularIndex = angular/nbrLine;
-	centerLine->rIndex = radius/nbrLine;
-	if (nbrLine > sensibility)
-	{
-        return centerLine;
-    }
-    else
-    {
-        return NULL;
-    }
-}
-
-Point** getAllGravityPoints(DonneesImageTab* tabRegion, IdRegions *allIds)
-{
-	int id;
-	
-	int x;
-	int y;
-	
-	int label;
-	
-	int sommeX;
-	int compteurX;
-	
-	int sommeY;
-	int compteurY;
-	
-	Point** tabPoints = (Point**)malloc(sizeof(Point*) * ((allIds->size)-1) );
-	for(x = 0; x < ((allIds->size)-1); x++)
-	{
-		tabPoints[x] = (Point*)malloc(sizeof(Point));
-	}
-	
-	for(id = 1; id < allIds->size; id++)
-	{
-		sommeX = 0;
-		compteurX = 0;
-		sommeY = 0;
-		compteurY = 0;
-		
-		label = allIds->regions[id]->label;
-		
-		for(y = 0; y < tabRegion->hauteurImage; y++)
-		{
-			for(x = 0; x < tabRegion->largeurImage; x++)
-			{
-				if(tabRegion->donneesTab[x][y][RED] == label)
+				// We activate the corresponding flag
+				isInRegion = true;
+				// And we update the startY only if it is lower than the previous one
+				if (startY > j)
 				{
-					sommeX = sommeX + x;
-					compteurX++;
-					
-					sommeY = sommeY + y;
-					compteurY++;
+					startY = j;
+				}
+			}
+			// If we are not in the region and if we where previously
+			if (tabRegion->donneesTab[i][j][BLUE] != idRegion->label &&
+				tabRegion->donneesTab[i][j][GREEN] != idRegion->label &&
+				tabRegion->donneesTab[i][j][RED] != idRegion->label &&
+				isInRegion)
+			{
+				// We deactivate the corresponding flag
+				isInRegion = false;
+				// And we update the endY only if it is higher than the previous one
+				if (endY < j)
+				{
+					endY = j;
 				}
 			}
 		}
-		
-		tabPoints[id-1]->x = sommeX / compteurX;
-		tabPoints[id-1]->y = sommeY / compteurY;
-		tabPoints[id-1]->label = label;
-		tabPoints[id-1]->coef = -1;
 	}
-	
-	return(tabPoints);
-}
 
-void colorGravityPointRegions(DonneesImageTab* tabRegion, Point** tabPoints, int size)
-{
-	int index;
-	int i;
-	for(index = 0; index < size; index++)
+	// Getting the width of the region
+	int startX = tabRegion->largeurImage;
+	int endX = -1;
+	for (j = 0; j < tabRegion->hauteurImage; j++)
 	{
-		if(tabPoints[index]->coef >= 0.90)
+		isInRegion = false;
+		for (i = 0; i < tabRegion->largeurImage; i++)
 		{
-		    for(i = -2; i <= 2; i++)
-		    {
-	            if (0 <= tabPoints[index]->x + i && tabPoints[index]->x + i < tabRegion->largeurImage)
-	            {
-		            // Colorise the center of gravity
-		            tabRegion->donneesTab[tabPoints[index]->x + i][tabPoints[index]->y][BLUE] = 255 - 
-		                tabRegion->donneesTab[tabPoints[index]->x + i][tabPoints[index]->y][BLUE];
-		            tabRegion->donneesTab[tabPoints[index]->x + i][tabPoints[index]->y][GREEN] = 255 - 
-		                tabRegion->donneesTab[tabPoints[index]->x + i][tabPoints[index]->y][GREEN];
-		            tabRegion->donneesTab[tabPoints[index]->x + i][tabPoints[index]->y][RED] = 255 - 
-		                tabRegion->donneesTab[tabPoints[index]->x + i][tabPoints[index]->y][RED];
-		        }
-		        if (0 <= tabPoints[index]->y + i && tabPoints[index]->y + i < tabRegion->hauteurImage)
-	            {
-		            // Colorise the center of gravity
-		            tabRegion->donneesTab[tabPoints[index]->x][tabPoints[index]->y + i][BLUE] = 255 - 
-		                tabRegion->donneesTab[tabPoints[index]->x][tabPoints[index]->y + i][BLUE];
-		            tabRegion->donneesTab[tabPoints[index]->x][tabPoints[index]->y + i][GREEN] = 255 - 
-		                tabRegion->donneesTab[tabPoints[index]->x][tabPoints[index]->y + i][GREEN];
-		            tabRegion->donneesTab[tabPoints[index]->x][tabPoints[index]->y + i][RED] = 255 - 
-		                tabRegion->donneesTab[tabPoints[index]->x][tabPoints[index]->y + i][RED];
-		        }
+			// If we are in the region
+			if (tabRegion->donneesTab[i][j][BLUE] == idRegion->label &&
+				tabRegion->donneesTab[i][j][GREEN] == idRegion->label &&
+				tabRegion->donneesTab[i][j][RED] == idRegion->label)
+			{
+				// We activate the corresponding flag
+				isInRegion = true;
+				// And we update the startX only if it is lower than the previous one
+				if (startX > i)
+				{
+					startX = i;
+				}
+			}
+			// If we are not in the region and if we where previously
+			if (tabRegion->donneesTab[i][j][BLUE] != idRegion->label &&
+				tabRegion->donneesTab[i][j][GREEN] != idRegion->label &&
+				tabRegion->donneesTab[i][j][RED] != idRegion->label &&
+				isInRegion)
+			{
+				// We deactivate the corresponding flag
+				isInRegion = false;
+				// And we update the endX only if it is higher than the previous one
+				if (endX < i)
+				{
+					endX = i;
+				}
 			}
 		}
 	}
+
+	// If we have found the width and the height of the region
+	if (endX >= 0 && endY >= 0 && startX >= 0 && startY >= 0)
+	{
+		// We initialise the DonnesImageTab with the corect lenght
+		tabShape = initTab(endX - startX, endY-startY);
+		// And we fill the region in
+		for (i = 0; i < tabShape->largeurImage; i++)
+		{
+			for (j = 0; j < tabShape->hauteurImage; j++)
+			{
+				if (tabRegion->donneesTab[i + startX][j + startY][BLUE] == idRegion->label &&
+					tabRegion->donneesTab[i + startX][j + startY][GREEN] == idRegion->label &&
+					tabRegion->donneesTab[i + startX][j + startY][RED] == idRegion->label)
+				{
+					tabShape->donneesTab[i][j][BLUE] = idRegion->blue;
+					tabShape->donneesTab[i][j][GREEN] = idRegion->green;
+					tabShape->donneesTab[i][j][RED] = idRegion->red;
+				}
+				else
+				{
+					tabShape->donneesTab[i][j][BLUE] = UNCHECKED;
+					tabShape->donneesTab[i][j][GREEN] = UNCHECKED;
+					tabShape->donneesTab[i][j][RED] = UNCHECKED;
+				}
+			}
+		}
+
+	}
+	return tabShape;
 }
 
-void destructTabPoints(Point*** tabPoints, int size)
+void writeAllRegion(DonneesImageTab *imageRegion, IdRegions *allRegions)
 {
-    if (tabPoints != NULL)
+	int index;
+	int increment = 1;
+	char bufferName[20];
+	char totalBuffer[20];
+
+	for(index = 0; index < allRegions->size; index++)
 	{
-		if (*tabPoints != NULL)
-		{
-	        int index;
-	        for(index = 0; index < size; index++)
-	        {
-		        free((*tabPoints)[index]);
-	        }
-	        free(*tabPoints);
-	        *tabPoints = NULL;
-		}
+		sprintf(bufferName, "%d", increment);
+		strcat(bufferName, "_e.bmp");
+		strcpy(totalBuffer, "./regions/");
+		strcat(totalBuffer, bufferName);
+
+		ecrisBMPRGB_Dans( tabToRGB(getShape(imageRegion, allRegions->regions[index])), totalBuffer);
+
+		increment++;
+		strcpy(bufferName, "");
+		strcpy(totalBuffer, "");
 	}
 }
-
-DonneesImageTab* getColorTabRegions(DonneesImageTab* tabRegion, IdRegions* idRegions)
-{
-    DonneesImageTab* tabRegionColor = initTab(tabRegion->largeurImage, tabRegion->hauteurImage);
-    int i, j, indexRegion;
-    for(i = 0; i < tabRegion->largeurImage; i++)
-    {
-        for(j = 0; j < tabRegion->hauteurImage; j++)
-        {
-            for(indexRegion = 0; indexRegion < idRegions->size; indexRegion++)
-            {
-                if (tabRegion->donneesTab[i][j][BLUE] == idRegions->regions[indexRegion]->label)
-                {
-                    tabRegionColor->donneesTab[i][j][BLUE] = idRegions->regions[indexRegion]->blue;
-                    tabRegionColor->donneesTab[i][j][GREEN] = idRegions->regions[indexRegion]->green;
-                    tabRegionColor->donneesTab[i][j][RED] = idRegions->regions[indexRegion]->red;
-                }
-            }
-        }
-    }
-    return tabRegionColor;
-}
-
