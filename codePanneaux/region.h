@@ -29,6 +29,8 @@ typedef struct {
 
 // Returns a DonneesImageTab with all his value set to UNCHECKED
 DonneesImageTab* initTabRegion(int width, int height);
+
+/* PAS APPEL*/
 // Initialisation function
 IdRegion* initIdRegion(int blue, int green, int red, int x, int y, int label);
 IdRegions* initIdRegions(int size);
@@ -42,22 +44,8 @@ IdRegion* findRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tabRegi
 //return all the idRegion of the different region
 IdRegions* findAllRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tabRegion, int sensibility);
 
-// Find all the regions in the image using the flow algorithm and put them in tabRegion
-//return all the idRegion of the different region
-IdRegions* findRegionFlow(DonneesImageTab* tabImage, DonneesImageTab* tabRegion, int sensibility);
+/* PAS APPEL*/
 // Give the color of a neighboor
 IdRegion* whatIsNeighboorsColor(DonneesImageTab* tabRegion, int x, int y);
 
-// Returns the line who appears the most in the given Hough transform region.
-//Sensibility is the minimum number of pixel that must be on the region to be counted as a line
-Line* getCenterLineFromRegion(DonneesImageTab* tabHough, DonneesImageTab* tabRegion, IdRegion* idRegion, int sensibility);
-
-// Returns a list of all the center of gravity of all regions in tabRegion
-Point** getAllGravityPoints(DonneesImageTab* tabRegion, IdRegions *allIds);
-// Show the center of gravity on the given tabRegion with a red dot
-void colorGravityPointRegions(DonneesImageTab* tabRegion, Point** tabPoints, int size);
-// Free a list of Point from the memory
-void destructTabPoints(Point*** tabPoints, int size);
-
-DonneesImageTab* getColorTabRegions(DonneesImageTab* tabRegion, IdRegions* idRegions);
-
+DonneesImageTab* getShape(DonneesImageTab* tabRegion,  IdRegion* idRegion);
