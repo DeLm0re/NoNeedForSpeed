@@ -7,7 +7,7 @@ CC = gcc
 CLIBS = -lm
 
 TARGET = main
-DEPENDENCIES = main.o BmpLib.o OutilsLib.o image.o region.o road.o displayRoad.o roadDetection.o trajectory.o
+DEPENDENCIES = main.o BmpLib.o OutilsLib.o image.o region.o rescale.o neuralNetwork.o
 
 $(TARGET): $(TARGET).o $(DEPENDENCIES)
 	@echo "Links edition :"
