@@ -12,6 +12,7 @@
 
 //Header file
 #include "neuralNetwork.h"
+#include "motif.h"
 
 
 int main(int argc, char** argv)
@@ -19,5 +20,13 @@ int main(int argc, char** argv)
 	// Initializing the random with a seed
 	srand(10495854);
 
+    DonneesImageRGB* imageSign = lisBMPRGB("imagesRoutes/panneau1.bmp");
+    DonneesImageTab* imageSignTab = RGBToTab(imageSign);
+    
+    
+    
+    libereDonneesImageRGB(&imageSign);
+    libereDonneesTab(&imageSignTab);
+    
 	return 0;
 }
