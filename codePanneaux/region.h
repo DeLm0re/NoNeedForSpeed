@@ -41,6 +41,9 @@ IdRegion* findRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tabRegi
 // Find all the regions in the image using the BottomUp algorithm and put them in tabRegion
 //return all the idRegion of the different region
 IdRegions* findAllRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tabRegion, int sensibility);
+// Find all the regions of a given color in the image using the BottomUp algorithm and put them in tabRegion
+//return all the idRegion of the different region
+IdRegions* findAllColorRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tabRegion, int red, int green, int blue, int sensibility);
 
 // Find all the regions in the image using the flow algorithm and put them in tabRegion
 //return all the idRegion of the different region

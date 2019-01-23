@@ -229,6 +229,80 @@ IdRegions* findAllRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tab
 	return idRegions;
 }
 
+IdRegions* findAllColorRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab* tabRegion, int red, int green, int blue, int sensibility)
+{
+	// Use to store all IdRegion
+	IdRegions* idRegions = initIdRegions(1);
+	// Use to store the idRegions while realocating memories
+	IdRegions* tempIdRegions = NULL;
+	// Use to store the IdRegion fo the region found
+	IdRegion* tempIdRegion = NULL;
+	int i, j;
+	int k;
+	int label = 0;
+	// Use to know the number of region found
+	int nbrRegion = 0;
+	
+	// For each pixels
+	for (i = 0; i < tabRegion->largeurImage; i++)
+	{
+		for (j = 0; j < tabRegion->hauteurImage; j++)
+		{
+			// If it is empty (valid starting point)
+			if (tabRegion->donneesTab[i][j][BLUE] == UNCHECKED &&
+				tabRegion->donneesTab[i][j][GREEN] == UNCHECKED &&
+				tabRegion->donneesTab[i][j][RED] == UNCHECKED &&
+				floor(tabImage->donneesTab[i][j][BLUE] - blue) <= 15 &&
+				floor(tabImage->donneesTab[i][j][GREEN] - green) <= 15 &&
+				floor(tabImage->donneesTab[i][j][RED] - red) <= 15)
+			{
+				// We find the region which contain the starting point
+				tempIdRegion = findRegionBottomUp(tabImage, tabRegion, i, j, label, sensibility);
+				// We change the label
+				label+=10;
+				// We say that we find one more region
+				nbrRegion++;
+				
+				// If we can save it in idRegions
+				if (idRegions->size >= nbrRegion)
+				{
+					// We put it in the list of idRegion
+					idRegions->regions[nbrRegion - 1] = tempIdRegion;
+				}
+				// If not
+				else
+				{
+					// We realoc idRegions
+					// First by initializing an IdRegions which will be use to transfer the value
+					tempIdRegions = initIdRegions(nbrRegion);
+					// We copy everything into the previously initialized IdRegion
+					for(k = 0; k < idRegions->size; k++)
+					{
+						tempIdRegions->regions[k] = idRegions->regions[k];
+						idRegions->regions[k] = NULL;
+					}
+					// We reInitialize idRegions
+					destructIdRegions(&idRegions);
+					idRegions = initIdRegions(nbrRegion);
+					// Then, we put back all the value
+					for(k = 0; k < idRegions->size; k++)
+					{
+						idRegions->regions[k] = tempIdRegions->regions[k];
+						tempIdRegions->regions[k] = NULL;
+					}
+					// And we destruct the temporary IdRegions
+					destructIdRegions(&tempIdRegions);
+					
+					// Finaly, we add the found region
+					idRegions->regions[nbrRegion - 1] = tempIdRegion;
+				}
+			}
+		}
+	}
+	// And we return the list of idRegion
+	return idRegions;
+}
+
 IdRegions* findRegionFlow(DonneesImageTab* tabImage, DonneesImageTab* tabRegion, int sensibility)
 {
 	int i, j;
