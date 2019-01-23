@@ -55,3 +55,17 @@ Neurone *createNeurone(int weightAbsDimention, int weigthOrdDimention, Letter ta
  * @return  :   result of the sum
  */
 int calculateWeightedSum(DonneesImageTab *binaryImage, Neurone *workingNeurone);
+
+
+
+/* @function
+ *      Format a binary image for the neural network
+ *      White -> -1
+ *      Black -> 1
+ * 
+ * @param
+ *      DonneesImageTab *binaryImage
+ * 
+ * @return  :   \
+ */
+void formatImage(DonneesImageTab *binaryImage);

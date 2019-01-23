@@ -90,3 +90,35 @@ int calculateWeightedSum(DonneesImageTab *binaryImage, Neurone *workingNeurone)
 
     return total;
 }
+
+
+
+/* @function
+ *      Format a binary image for the neural network
+ *      White -> -1
+ *      Black -> 1
+ * 
+ * @param
+ *      DonneesImageTab *binaryImage
+ * 
+ * @return  :   \
+ */
+void formatImage(DonneesImageTab *binaryImage)
+{
+    int absIndex, ordIndex;
+
+    for(absIndex = 0; absIndex < binaryImage->largeurImage; absIndex++)
+    {
+        for(ordIndex = 0; ordIndex < binaryImage->hauteurImage; ordIndex++)
+        {
+            if(binaryImage->donneesTab[absIndex][ordIndex][RED] == 0)
+            {
+                binaryImage->donneesTab[absIndex][ordIndex][RED] = 1;
+            }
+            else
+            {
+                binaryImage->donneesTab[absIndex][ordIndex][RED] = -1;
+            }
+        }
+    }
+}
