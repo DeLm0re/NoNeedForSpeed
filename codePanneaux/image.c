@@ -190,6 +190,20 @@ Line* initLine(int maxRIndex, int maxAngularIndex)
 	return line;
 }
 
+Histogram* initHistogram(int size)
+{
+	Histogram* histogram = malloc(sizeof(Histogram));
+	histogram->values = malloc(sizeof(int) * size);
+	int i;
+	for (i = 0; i < size; i++)
+	{
+		histogram->values[i] = 0;
+	}
+	histogram->size = size;
+	return histogram;
+}
+
+
 void libereDonneesTab(DonneesImageTab** tabImage)
 {
 	if (tabImage != NULL)
@@ -227,6 +241,19 @@ void destructFilter(Filter** filter)
 			free(*filter);
 		}
 		*filter = NULL;
+	}
+}
+
+void destructHistogram(Histogram** histogram)
+{
+	if (histogram != NULL)
+	{
+		if (*histogram != NULL)
+		{
+			free((*histogram)->values);
+			free(*histogram);
+		}
+		*histogram = NULL;
 	}
 }
 
@@ -383,6 +410,82 @@ void cutBetweenLevel(DonneesImageTab* tabImage, int min, int max)
 				
 		}
 	}
+}
+
+Histogram* createHistogram(DonneesImageTab* tabImage, int color)
+{
+	int i, j;
+	// We search for the maximum value
+	int max = 0;
+	for(i = 0; i < tabImage->largeurImage; i++)
+	{
+		for(j = 0; j < tabImage->hauteurImage; j++)
+		{
+			if (tabImage->donneesTab[i][j][color] > max)
+			{
+				max = tabImage->donneesTab[i][j][color];
+			}
+		}
+	}
+	if (max < 255)
+	{
+		max = 255;
+	}
+	// We initialize the histogram
+	Histogram* histogram = initHistogram(max+1);
+	// For each pixel of the image
+	for(i = 0; i < tabImage->largeurImage; i++)
+	{
+		for(j = 0; j < tabImage->hauteurImage; j++)
+		{
+			if (tabImage->donneesTab[i][j][color] < max+1)
+			{
+				// We count up the correct column of the histogram
+				histogram->values[tabImage->donneesTab[i][j][color]]++;
+			}
+		}
+	}
+	return histogram;
+}
+
+DonneesImageRGB* histogramToRGB(Histogram* histogram)
+{
+	// We init the image which will contain the histogram
+	DonneesImageRGB* image = initImage(histogram->size, 256);
+	int i, j;
+	// We find the maximum value of the histogram
+	int max = 0;
+	for(i = 0; i < histogram->size; i++)
+	{
+		if (histogram->values[i] > max)
+		{
+			max = histogram->values[i];
+		}
+	}
+	// for each row
+	for(j = 0; j < image->largeurImage; j++)
+	{
+		// In each column
+		for(i = 0; i < image->hauteurImage; i++)
+		{
+			// We light the pixel in blue if his index is lower than the corresponding histogram column
+			//We use a maped version of the value in the histogram using the maximum value we found previously
+			if (i <= nmap(histogram->values[j], 0, max, 0, 255))
+			{
+				image->donneesRGB[(image->largeurImage*i + j) * 3] = 200;
+				image->donneesRGB[(image->largeurImage*i + j) * 3 + 1] = 50;
+				image->donneesRGB[(image->largeurImage*i + j) * 3 + 2] = 50;
+			}
+			// Otherwise, we light the pixel in white
+			else
+			{
+				image->donneesRGB[(image->largeurImage*i + j) * 3] = 255;
+				image->donneesRGB[(image->largeurImage*i + j) * 3 + 1] = 255;
+				image->donneesRGB[(image->largeurImage*i + j) * 3 + 2] = 255;
+			}
+		}
+	}
+	return image;
 }
 
 DonneesImageTab* createHough(DonneesImageTab* tabImage, int sensibility, int nbrAngularSteps)
@@ -904,4 +1007,119 @@ bool areNeighboursWhite(DonneesImageTab* tabImage, int whiteLevel, int x, int y)
 		}
 	}
 	return isWhite;
+}
+
+void applyErosionFilter(DonneesImageTab* tabImage, int blackLevel)
+{
+    int i, j, cIndex;
+    for(i = 0; i < tabImage->largeurImage; i++)
+	{
+		for(j = 0; j < tabImage->hauteurImage; j++)
+		{
+		    for(cIndex = 0; cIndex < 3; cIndex++)
+		    {
+		        if (areNeighboursBlack(tabImage, blackLevel, i, j))
+		        {
+		            tabImage->donneesTab[i][j][cIndex] = -1;
+		        }
+		    }
+		}
+	}
+	for(i = 0; i < tabImage->largeurImage; i++)
+	{
+		for(j = 0; j < tabImage->hauteurImage; j++)
+		{
+		    for(cIndex = 0; cIndex < 3; cIndex++)
+		    {
+		        if (tabImage->donneesTab[i][j][cIndex] == -1)
+		        {
+		            tabImage->donneesTab[i][j][cIndex] = 0;
+		        }
+		    }
+		}
+	}
+}
+
+bool areNeighboursBlack(DonneesImageTab* tabImage, int blackLevel, int x, int y)
+{
+    int i, j, cIndex;
+    bool isBlack = false;
+    for(i = -1; i <= 1; i++)
+	{
+		for(j = -1; j <= 1; j++)
+		{
+		    for(cIndex = 0; cIndex < 3; cIndex++)
+		    {
+		        if (0 <= x + i && x + i < tabImage->largeurImage && 
+		            0 <= y + j && y + j < tabImage->hauteurImage &&
+		            tabImage->donneesTab[x + i][y + j][cIndex] >= 0 &&
+		            tabImage->donneesTab[x + i][y + j][cIndex] <= blackLevel)
+		        {
+		            isBlack = true;
+		        }
+		    }
+		}
+	}
+	return isBlack;
+}
+
+DonneesImageTab* applyLocalBinaryPattern(DonneesImageTab* tabImage)
+{
+	DonneesImageTab* newTabImage = initTab(tabImage->largeurImage, tabImage->hauteurImage);
+	int i, j;
+	int k, l;
+	int cIndex;
+	int filter[3][3];
+	filter[0][0] = 1;
+	filter[1][0] = 2;
+	filter[2][0] = 4;
+	filter[2][1] = 8;
+	filter[2][2] = 16;
+	filter[1][2] = 32;
+	filter[0][2] = 64;
+	filter[0][1] = 128;
+	filter[1][1] = 0;
+	int pixel;
+	for(i = 0; i < tabImage->largeurImage; i++)
+	{
+		for(j = 0; j < tabImage->hauteurImage; j++)
+		{
+			for(cIndex = 0; cIndex < 3; cIndex++)
+			{
+				pixel = 0;
+				for(k = 0; k < 3; k++)
+				{
+					for(l = 0; l < 3; l++)
+					{
+						if (0 <= i + k - 1 && i + k - 1 < tabImage->largeurImage &&
+							0 <= j + l - 1 && j + l - 1 < tabImage->hauteurImage)
+						{
+							if (tabImage->donneesTab[i + k - 1][j + l - 1][cIndex] >= tabImage->donneesTab[i][j][cIndex])
+							{
+								pixel += filter[k][l];
+							}
+						}
+					}
+				}
+				newTabImage->donneesTab[i][j][cIndex] = pixel;
+			}
+		}
+	}
+	return newTabImage;
+}
+
+float binaryPatternComp(DonneesImageTab* tabImage, DonneesImageTab* tabRef)
+{
+	float totalRelativeError = 0;
+	Histogram* tabImageHistogram = createHistogram(tabImage, BLUE);
+	Histogram* tabRefHistogram = createHistogram(tabRef, BLUE);
+	int i;
+	int iMax = min(tabImageHistogram->size, tabRefHistogram->size);
+	for(i = 0; i < iMax; i++)
+	{
+		totalRelativeError += absValue(tabImageHistogram->values[i] - tabRefHistogram->values[i])/tabRefHistogram->values[i];
+	}
+	destructHistogram(&tabImageHistogram);
+	destructHistogram(&tabRefHistogram);
+	return totalRelativeError/iMax;
 }

@@ -75,6 +75,12 @@ typedef struct
 	float lenghtRatio;
 } Line;
 
+// Use to store histogram information
+typedef struct {
+	int* values;
+	int size;
+} Histogram;
+
 //Use to store a point
 typedef struct {
 	int x;
@@ -116,9 +122,11 @@ DonneesImageRGB* initImage(int width, int height);
 DonneesImageTab* initTab(int width, int height);
 Filter* initFilter(int width, int height);
 Line* initLine(int maxRIndex, int maxAngularIndex);
+Histogram* initHistogram(int size);
 //Destruction function
 void libereDonneesTab(DonneesImageTab** tabImage);
 void destructFilter(Filter** filter);
+void destructHistogram(Histogram** histogram);
 
 /////////////////////////
 //--- Image editing ---//
@@ -134,6 +142,15 @@ DonneesImageTab* cpyTab(DonneesImageTab* tabImage);
 void makeGreyLevel(DonneesImageTab* tabImage);
 // every value above max become 255 and every value below min become 0
 void cutBetweenLevel(DonneesImageTab* tabImage, int min, int max);
+
+/////////////////////
+//--- Histogram ---//
+/////////////////////
+
+// Create an histogram from the given DonneesImageTab for the given color (BLUE, RED or GREEN)
+Histogram* createHistogram(DonneesImageTab* tabImage, int color);
+// Convert the histogram to a DonneesImageRGB
+DonneesImageRGB* histogramToRGB(Histogram* histogram);
 
 //////////////////////////
 //--- Line detection ---//
@@ -166,4 +183,11 @@ DonneesImageTab* applyRobertsFilterOnTab(DonneesImageTab* tabImage);
 DonneesImageTab* applyGradiantFilterOnTab(DonneesImageTab* tabImage, int type); //PREWITT or SOBEL
 void applyDillatationFilter(DonneesImageTab* tabImage, int whiteLevel);
 bool areNeighboursWhite(DonneesImageTab* tabImage, int whiteLevel, int x, int y);
+void applyErosionFilter(DonneesImageTab* tabImage, int blackLevel);
+bool areNeighboursBlack(DonneesImageTab* tabImage, int blackLevel, int x, int y);
+
+// create a 3*3 LBP of the given DonneesImageTab
+DonneesImageTab* applyLocalBinaryPattern(DonneesImageTab* tabImage);
+// comapre two LBP images and return the relative error between tabImage and tabRef
+float binaryPatternComp(DonneesImageTab* tabImage, DonneesImageTab* tabRef);
 
