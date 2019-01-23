@@ -42,3 +42,16 @@ typedef struct Neurone
  * @return  :   neurone created
  * */
 Neurone *createNeurone(int weightAbsDimention, int weigthOrdDimention, Letter targetLetter);
+
+
+/* @function
+ *      Calculate the weighted sum of an image
+ *      for a given neurone
+ * 
+ * @param
+ *      DonneesImageTab *binaryImage
+ *      Neurone *workingNeurone
+ * 
+ * @return  :   result of the sum
+ */
+int calculateWeightedSum(DonneesImageTab *binaryImage, Neurone *workingNeurone);

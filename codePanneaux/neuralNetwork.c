@@ -46,3 +46,47 @@ Neurone *createNeurone(int weightAbsDimention, int weigthOrdDimention, Letter ta
 }
 
 
+/* @function
+ *      Calculate the weighted sum of an image
+ *      for a given neurone
+ * 
+ * @param
+ *      DonneesImageTab *binaryImage
+ *      Neurone *workingNeurone
+ * 
+ * @return  :   result of the sum
+ */
+int calculateWeightedSum(DonneesImageTab *binaryImage, Neurone *workingNeurone)
+{
+    int absIndex, ordIndex;
+
+    //Score of each pixel of the image
+    int pixelSum = 0;
+
+    //Sum of significative weights
+    int weightSum = 0;
+
+    //Weighted sum of the image
+    int total = 0;
+
+    for(absIndex = 0; absIndex < workingNeurone->weightAbs; absIndex++)
+    {
+        for(ordIndex = 0; ordIndex < workingNeurone->weightOrd; ordIndex++)
+        {
+            pixelSum += workingNeurone->weights[absIndex][ordIndex] * binaryImage->donneesTab[absIndex][ordIndex][RED];
+
+            if(workingNeurone->weights[absIndex][ordIndex] > 0)
+            {
+                weightSum += workingNeurone->weights[absIndex][ordIndex];
+            }
+        }
+    }
+
+    //Check division by zero
+    if(weightSum != 0)
+    {
+        total = pixelSum / weightSum;
+    }
+
+    return total;
+}
