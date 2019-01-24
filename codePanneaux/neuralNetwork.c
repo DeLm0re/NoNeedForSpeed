@@ -162,3 +162,27 @@ void binariseImage(DonneesImageTab *greyImage)
         }
     }
 }
+
+
+
+/* @function
+ *      Trains a neurone with a given image
+ * 
+ * @param
+ *      Neurone *neurone  :   neurone to train
+ *      DonneesImageTab *formatImage    :   image to use
+ * 
+ * @return  :   \
+ */
+void trainNeurone(Neurone *neurone, DonneesImageTab *formatImage)
+{
+    int absIndex, ordIndex;
+
+    for(absIndex = 0; absIndex < neurone->weightAbs; absIndex++)
+    {
+        for(ordIndex = 0; ordIndex < neurone->weightOrd; ordIndex++)
+        {
+            neurone->weights[absIndex][ordIndex] += formatImage->donneesTab[absIndex][ordIndex][RED];
+        }
+    }
+}

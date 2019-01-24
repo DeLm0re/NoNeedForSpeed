@@ -90,3 +90,16 @@ void formatImage(DonneesImageTab *binaryImage);
  * @return  :   \
  */
 void binariseImage(DonneesImageTab *greyImage);
+
+
+
+/* @function
+ *      Trains a neurone with a given image
+ * 
+ * @param
+ *      Neurone *neurone  :   neurone to train
+ *      DonneesImageTab *formatImage    :   image to use
+ * 
+ * @return  :   \
+ */
+void trainNeurone(Neurone *neurone, DonneesImageTab *formatImage);   
