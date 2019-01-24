@@ -54,4 +54,6 @@ IdRegion* whatIsNeighboorsColor(DonneesImageTab* tabRegion, int x, int y);
 
 DonneesImageTab* getShape(DonneesImageTab* tabRegion,  IdRegion* idRegion);
 
+DonneesImageTab* getOriginalShape(DonneesImageTab* tabImage, DonneesImageTab* tabRegion,  IdRegion* idRegion);
+
 void writeAllRegion(DonneesImageTab *imageRegion, IdRegions *allRegions);
