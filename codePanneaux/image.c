@@ -1110,16 +1110,28 @@ DonneesImageTab* applyLocalBinaryPattern(DonneesImageTab* tabImage)
 
 float binaryPatternComp(DonneesImageTab* tabImage, DonneesImageTab* tabRef)
 {
+    int i;
 	float totalRelativeError = 0;
 	Histogram* tabImageHistogram = createHistogram(tabImage, BLUE);
 	Histogram* tabRefHistogram = createHistogram(tabRef, BLUE);
-	int i;
+	int totalImage = 0;
+	for(i = 0; i < tabImageHistogram->size; i++)
+	{
+	    totalImage += tabImageHistogram->values[i];
+	}
+	
+	int totalRef = 0;
+	for(i = 0; i < tabRefHistogram->size; i++)
+	{
+	    totalRef += tabRefHistogram->values[i];
+	}
+	
 	int iMax = min(tabImageHistogram->size, tabRefHistogram->size);
 	for(i = 0; i < iMax; i++)
 	{
-		totalRelativeError += absValue(tabImageHistogram->values[i] - tabRefHistogram->values[i])/tabRefHistogram->values[i];
+        totalRelativeError += absValue(((float)tabImageHistogram->values[i]) - ((float)tabRefHistogram->values[i]));
 	}
 	destructHistogram(&tabImageHistogram);
 	destructHistogram(&tabRefHistogram);
-	return totalRelativeError/iMax;
+	return totalRelativeError/(totalImage*totalRef);
 }

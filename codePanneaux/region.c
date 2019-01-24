@@ -303,132 +303,6 @@ IdRegions* findAllColorRegionBottomUp(DonneesImageTab* tabImage, DonneesImageTab
 	return idRegions;
 }
 
-IdRegions* findRegionFlow(DonneesImageTab* tabImage, DonneesImageTab* tabRegion, int sensibility)
-{
-	int i, j;
-	int k;
-	// We find the max color norm value in the tabImage
-	int max = 0;
-	int colorNorm;
-	for (i = 0; i < tabImage->largeurImage; i++)
-	{
-		for (j = 0; j < tabImage->hauteurImage; j++)
-		{
-			colorNorm = pow(tabImage->donneesTab[i][j][BLUE], 2) + 
-				pow(tabImage->donneesTab[i][j][GREEN], 2) +
-				pow(tabImage->donneesTab[i][j][RED], 2);
-			if (colorNorm > max)
-			{
-				max = colorNorm;
-			}
-		}
-	}
-	
-	// We initialize the flowLevel 
-	int flowLevel = sqrt(max);
-	// The label wich will be use to set the regions
-	int label = 0;
-	// use to save all the idRegion
-	IdRegions* idRegions = initIdRegions(1);
-	IdRegions* tempIdRegions = NULL;
-	IdRegion* tempIdRegion = NULL;
-	int nbrRegion = 0;
-	// We start a first loop that will last until we flooded everything
-	while(flowLevel >= 0)
-	{
-		// For each pixels
-		for (i = 0; i < tabRegion->largeurImage; i++)
-		{
-			for (j = 0; j < tabRegion->hauteurImage; j++)
-			{
-				// We calculate the norm of the pixel
-				colorNorm = sqrt(pow(tabImage->donneesTab[i][j][BLUE], 2) + 
-					pow(tabImage->donneesTab[i][j][GREEN], 2) +
-					pow(tabImage->donneesTab[i][j][RED], 2));
-				// If we are in en empty pixel and if it is at the flow level
-				if (tabRegion->donneesTab[i][j][BLUE] == UNCHECKED &&
-					tabRegion->donneesTab[i][j][GREEN] == UNCHECKED &&
-					tabRegion->donneesTab[i][j][RED] == UNCHECKED &&
-					absValue(flowLevel - colorNorm) < sensibility)
-				{
-					// We check the color of the neighbours
-					tempIdRegion = whatIsNeighboorsColor(tabRegion, i, j);
-					// If didn't found any neighbours
-					if(tempIdRegion == NULL)
-					{
-						// We color the pixel with the label of a new region.
-						tabRegion->donneesTab[i][j][BLUE] = label;
-						tabRegion->donneesTab[i][j][GREEN] = label;
-						tabRegion->donneesTab[i][j][RED] = label;
-						// We initialize an idRegion if it as not been yet
-						if (tempIdRegion == NULL)
-						{
-							tempIdRegion = initIdRegion(
-								label,
-								label,
-								label,
-								-1,
-								-1,
-								label);
-						}
-						// We increase the total number of region found
-						nbrRegion++;
-						// If we can save it in idRegions
-						if (idRegions->size >= nbrRegion)
-						{
-							// We put it in the list of idRegion
-							idRegions->regions[nbrRegion - 1] = tempIdRegion;
-						}
-						// If not
-						else
-						{
-							// We realoc idRegions
-							// First by initializing an IdRegions which will be use to transfer the value
-							tempIdRegions = initIdRegions(nbrRegion);
-							// We copy everything into the previously initialized IdRegion
-							for(k = 0; k < idRegions->size; k++)
-							{
-								tempIdRegions->regions[k] = idRegions->regions[k];
-								idRegions->regions[k] = NULL;
-							}
-							// We reInitialize idRegions
-							destructIdRegions(&idRegions);
-							idRegions = initIdRegions(nbrRegion);
-							// Then, we put back all the value
-							for(k = 0; k < idRegions->size; k++)
-							{
-								idRegions->regions[k] = tempIdRegions->regions[k];
-								tempIdRegions->regions[k] = NULL;
-							}
-							// And we destruct the temporary IdRegions
-							destructIdRegions(&tempIdRegions);
-							
-							// Finaly, we add the found region
-							idRegions->regions[nbrRegion - 1] = tempIdRegion;
-						}
-						// Then we update the label for the next region
-						label = (label + 20)%255;
-						// And we say that the idRegion can be reuse
-						tempIdRegion = NULL;
-					}
-					// If we found a neighbours
-					else
-					{
-						// We color the pixel with the same label
-						tabRegion->donneesTab[i][j][BLUE] = tempIdRegion->blue;
-						tabRegion->donneesTab[i][j][GREEN] = tempIdRegion->green;
-						tabRegion->donneesTab[i][j][RED] = tempIdRegion->red;
-					}
-				}
-			}
-		}
-		// each loop, we lower the flood level
-		flowLevel--;
-	}
-	// In the end, we return the list of idRegion
-	return idRegions;
-}
-
 IdRegion* whatIsNeighboorsColor(DonneesImageTab* tabRegion, int x, int y)
 {
 	int i, j;
@@ -567,6 +441,108 @@ DonneesImageTab* getShape(DonneesImageTab* tabRegion,  IdRegion* idRegion)
 	}
 	return tabShape;
 }
+
+DonneesImageTab* getOriginalShape(DonneesImageTab* tabImage, DonneesImageTab* tabRegion,  IdRegion* idRegion)
+{
+	int i, j;
+	DonneesImageTab* tabShape = NULL;
+	bool isInRegion = false;;
+	// Getting the height of the region
+	int startY = tabRegion->hauteurImage; // the maximum Y coordinate wich contain the shape
+	int endY = -1; // the minimum Y coordinate wich contain the shape
+	for (i = 0; i < tabRegion->largeurImage; i++)
+	{
+		isInRegion = false;
+		for (j = 0; j < tabRegion->hauteurImage; j++)
+		{
+			// If we are in the region
+			if (tabRegion->donneesTab[i][j][BLUE] == idRegion->label &&
+				tabRegion->donneesTab[i][j][GREEN] == idRegion->label &&
+				tabRegion->donneesTab[i][j][RED] == idRegion->label)
+			{
+				// We activate the corresponding flag
+				isInRegion = true;
+				// And we update the startY only if it is lower than the previous one
+				if (startY > j)
+				{
+					startY = j;
+				}
+			}
+			// If we are not in the region and if we where previously
+			if (tabRegion->donneesTab[i][j][BLUE] != idRegion->label &&
+				tabRegion->donneesTab[i][j][GREEN] != idRegion->label &&
+				tabRegion->donneesTab[i][j][RED] != idRegion->label &&
+				isInRegion)
+			{
+				// We deactivate the corresponding flag
+				isInRegion = false;
+				// And we update the endY only if it is higher than the previous one
+				if (endY < j)
+				{
+					endY = j;
+				}
+			}
+		}
+	}
+
+	// Getting the width of the region
+	int startX = tabRegion->largeurImage;
+	int endX = -1;
+	for (j = 0; j < tabRegion->hauteurImage; j++)
+	{
+		isInRegion = false;
+		for (i = 0; i < tabRegion->largeurImage; i++)
+		{
+			// If we are in the region
+			if (tabRegion->donneesTab[i][j][BLUE] == idRegion->label &&
+				tabRegion->donneesTab[i][j][GREEN] == idRegion->label &&
+				tabRegion->donneesTab[i][j][RED] == idRegion->label)
+			{
+				// We activate the corresponding flag
+				isInRegion = true;
+				// And we update the startX only if it is lower than the previous one
+				if (startX > i)
+				{
+					startX = i;
+				}
+			}
+			// If we are not in the region and if we where previously
+			if (tabRegion->donneesTab[i][j][BLUE] != idRegion->label &&
+				tabRegion->donneesTab[i][j][GREEN] != idRegion->label &&
+				tabRegion->donneesTab[i][j][RED] != idRegion->label &&
+				isInRegion)
+			{
+				// We deactivate the corresponding flag
+				isInRegion = false;
+				// And we update the endX only if it is higher than the previous one
+				if (endX < i)
+				{
+					endX = i;
+				}
+			}
+		}
+	}
+
+	// If we have found the width and the height of the region
+	if (endX >= 0 && endY >= 0 && startX >= 0 && startY >= 0)
+	{
+		// We initialise the DonnesImageTab with the corect lenght
+		tabShape = initTab(endX - startX, endY-startY);
+		// And we fill the region in
+		for (i = 0; i < tabShape->largeurImage; i++)
+		{
+			for (j = 0; j < tabShape->hauteurImage; j++)
+			{
+				tabShape->donneesTab[i][j][BLUE] = tabImage->donneesTab[i + startX][j + startY][BLUE];
+				tabShape->donneesTab[i][j][GREEN] = tabImage->donneesTab[i + startX][j + startY][GREEN];
+				tabShape->donneesTab[i][j][RED] = tabImage->donneesTab[i + startX][j + startY][RED];
+			}
+		}
+
+	}
+	return tabShape;
+}
+
 
 void writeAllRegion(DonneesImageTab *imageRegion, IdRegions *allRegions)
 {
