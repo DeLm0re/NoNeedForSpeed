@@ -51,8 +51,8 @@ Neurone *createNeurone(int weightAbsDimention, int weigthOrdDimention, Letter ta
  *      for a given neurone
  * 
  * @param
- *      DonneesImageTab *binaryImage
- *      Neurone *workingNeurone
+ *      DonneesImageTab *binaryImage    :   image to analyze
+ *      Neurone *workingNeurone     :   neurone analyzing
  * 
  * @return  :   result of the sum
  */
@@ -99,7 +99,7 @@ int calculateWeightedSum(DonneesImageTab *binaryImage, Neurone *workingNeurone)
  *      Black -> 1
  * 
  * @param
- *      DonneesImageTab *binaryImage
+ *      DonneesImageTab *binaryImage    :   image to format
  * 
  * @return  :   \
  */
@@ -111,13 +111,53 @@ void formatImage(DonneesImageTab *binaryImage)
     {
         for(ordIndex = 0; ordIndex < binaryImage->hauteurImage; ordIndex++)
         {
-            if(binaryImage->donneesTab[absIndex][ordIndex][RED] == 0)
+            if(binaryImage->donneesTab[absIndex][ordIndex][RED] == BINARY_BLACK
+                && binaryImage->donneesTab[absIndex][ordIndex][GREEN] == BINARY_BLACK
+                && binaryImage->donneesTab[absIndex][ordIndex][BLUE] == BINARY_BLACK)
             {
-                binaryImage->donneesTab[absIndex][ordIndex][RED] = 1;
+                binaryImage->donneesTab[absIndex][ordIndex][RED] = FORMAT_BLACK;
+                binaryImage->donneesTab[absIndex][ordIndex][GREEN] = FORMAT_BLACK;
+                binaryImage->donneesTab[absIndex][ordIndex][BLUE] = FORMAT_BLACK;
             }
             else
             {
-                binaryImage->donneesTab[absIndex][ordIndex][RED] = -1;
+                binaryImage->donneesTab[absIndex][ordIndex][RED] = FORMAT_WHITE;
+                binaryImage->donneesTab[absIndex][ordIndex][GREEN] = FORMAT_WHITE;
+                binaryImage->donneesTab[absIndex][ordIndex][BLUE] = FORMAT_WHITE;
+            }
+        }
+    }
+}
+
+
+
+/* @function
+ *      Transforms a grey level image into a binary image
+ * 
+ * @param
+ *      DonneesImageTab *greyImage  :   image to converts
+ * 
+ * @return  :   \
+ */
+void binariseImage(DonneesImageTab *greyImage)
+{
+    int absIndex, ordIndex;
+
+    for(absIndex = 0; absIndex < greyImage->largeurImage; absIndex++)
+    {
+        for(ordIndex = 0; ordIndex < greyImage->hauteurImage; ordIndex++)
+        {
+            if(greyImage->donneesTab[absIndex][ordIndex][RED] <= 127)
+            {
+                greyImage->donneesTab[absIndex][ordIndex][RED] = BINARY_BLACK;
+                greyImage->donneesTab[absIndex][ordIndex][GREEN] = BINARY_BLACK;
+                greyImage->donneesTab[absIndex][ordIndex][BLUE] = BINARY_BLACK;
+            }
+            else
+            {
+                greyImage->donneesTab[absIndex][ordIndex][RED] = BINARY_WHITE;
+                greyImage->donneesTab[absIndex][ordIndex][GREEN] = BINARY_BLACK;
+                greyImage->donneesTab[absIndex][ordIndex][BLUE] = BINARY_BLACK;
             }
         }
     }

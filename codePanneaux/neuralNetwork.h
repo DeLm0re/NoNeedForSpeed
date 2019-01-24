@@ -10,6 +10,15 @@
  */
 typedef enum{A = 1, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z = 26}Letter;
 
+/* @definition
+ *      Values of a binary image
+ */
+#define BINARY_BLACK 0
+#define BINARY_WHITE 255
+#define FORMAT_BLACK 1
+#define FORMAT_WHITE -1
+
+
 /* @type
  *      Structure of a neurone with
  *      undefined number of input
@@ -49,8 +58,8 @@ Neurone *createNeurone(int weightAbsDimention, int weigthOrdDimention, Letter ta
  *      for a given neurone
  * 
  * @param
- *      DonneesImageTab *binaryImage
- *      Neurone *workingNeurone
+ *      DonneesImageTab *binaryImage    :   image to analyze
+ *      Neurone *workingNeurone     :   neurone analyzing
  * 
  * @return  :   result of the sum
  */
@@ -64,8 +73,20 @@ int calculateWeightedSum(DonneesImageTab *binaryImage, Neurone *workingNeurone);
  *      Black -> 1
  * 
  * @param
- *      DonneesImageTab *binaryImage
+ *      DonneesImageTab *binaryImage    :   image to format
  * 
  * @return  :   \
  */
 void formatImage(DonneesImageTab *binaryImage);
+
+
+
+/* @function
+ *      Transforms a grey level image into a binary image
+ * 
+ * @param
+ *      DonneesImageTab *greyImage  :   image to converts
+ * 
+ * @return  :   \
+ */
+void binariseImage(DonneesImageTab *greyImage);
