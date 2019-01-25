@@ -3,7 +3,7 @@
 
 /* @function
  *      Creates a neurone with default values
- *      and weights initialized randomly
+ *      and weights initialized
  * 
  * @param
  *      int weightAbsDimention  :   dimention of the weight matrix in abscissa
@@ -47,6 +47,54 @@ Neurone *createNeurone(int weightAbsDimention, int weigthOrdDimention, Letter ta
 
 
 /* @function
+ *      Creates the alphabet neural network of 26 neurones
+ *      initialized and trained
+ * 
+ * @return  :   AlphabetNeuralNetwork created
+ * */
+AlphabetNeuralNetwork *createAlphabetNeuralNetwork(void)
+{
+    // Names of letter.bmp files
+    char alphabet[26] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+
+    //New neural network
+    AlphabetNeuralNetwork *ANN = (AlphabetNeuralNetwork*)malloc(sizeof(AlphabetNeuralNetwork));
+    ANN->nbNeurone = 26;
+    ANN->neurones = (Neurone*)malloc(ANN->nbNeurone * sizeof(Neurone));
+
+    int alphabetIndex;
+    for(alphabetIndex = 0; alphabetIndex < ANN->nbNeurone; alphabetIndex++)
+    {
+        //Creates new neurone
+        ANN->neurones[alphabetIndex] = *createNeurone(NB_INPUTS_NEURONE, NB_INPUTS_NEURONE, alphabetIndex + 1);
+
+        //Get the corresponding image to use for training
+        char *imagePath = (char*)malloc(30*sizeof(char));
+        char *imageName = (char*)malloc(6*sizeof(char));
+        imageName[0] = alphabet[alphabetIndex];
+        strcat(imageName, ".bmp");
+        strcat(imagePath, "alphabet/");
+        strcat(imagePath, imageName);
+
+        //Print in the console
+        printf("Training neural network on %s\n", imagePath);
+
+        DonneesImageRGB *imageRGB = lisBMPRGB(imagePath);
+	    DonneesImageTab *image = RGBToTab(imageRGB);
+	    makeGreyLevel(image);
+	    binariseImage(image);
+	    formatImage(image);
+
+        //Train the neuron
+        trainNeurone(&(ANN->neurones[alphabetIndex]), image);
+    }
+
+    return ANN;
+}
+
+
+/* @function
  *      Calculate the weighted sum of an image
  *      for a given neurone
  * 
@@ -56,7 +104,7 @@ Neurone *createNeurone(int weightAbsDimention, int weigthOrdDimention, Letter ta
  * 
  * @return  :   result of the sum
  */
-int calculateWeightedSum(DonneesImageTab *binaryImage, Neurone *workingNeurone)
+float calculateWeightedSum(DonneesImageTab *binaryImage, Neurone *workingNeurone)
 {
     int absIndex, ordIndex;
 
@@ -67,7 +115,7 @@ int calculateWeightedSum(DonneesImageTab *binaryImage, Neurone *workingNeurone)
     int weightSum = 0;
 
     //Weighted sum of the image
-    int total = 0;
+    float total = 0;
 
     for(absIndex = 0; absIndex < workingNeurone->weightAbs; absIndex++)
     {
@@ -171,7 +219,8 @@ void binariseImage(DonneesImageTab *greyImage)
  * @param
  *      Neurone *neurone  :   neurone to train
  *      DonneesImageTab *formatImage    :   image to use
- * 
+ * char *imagePath = (char*)malloc(30*sizeof(char));
+        char *imageName = (char*)malloc(6*sizeof(char));
  * @return  :   \
  */
 void trainNeurone(Neurone *neurone, DonneesImageTab *formatImage)
@@ -185,4 +234,50 @@ void trainNeurone(Neurone *neurone, DonneesImageTab *formatImage)
             neurone->weights[absIndex][ordIndex] += formatImage->donneesTab[absIndex][ordIndex][RED];
         }
     }
+}
+
+
+
+/* @function
+ *      Analyze a binary image of size 60x60
+ *      and return the most probable letter detected
+ *      
+ * @param
+ *      AlphabetNeuralNetwork *ANN    :   neural network trained
+ *      DonneesImageTab *binaryImage  :   image to analyze
+ * 
+ * @return  :   most probable letter detected, or -1 if nothing
+ */
+Letter detectLetterOnImage(AlphabetNeuralNetwork *ANN, DonneesImageTab *binaryImage)
+{
+    Letter mostProbableLetter = -1;
+
+    int neuroneIndex;
+    float bestSum = 0;
+
+    for(neuroneIndex = 0; neuroneIndex < ANN->nbNeurone; neuroneIndex++)
+    {
+        //Compare the image to the weights of the neuron
+        float currentSum = calculateWeightedSum(binaryImage, &(ANN->neurones[neuroneIndex]));
+        
+        //Get the letter that matches best
+        if(currentSum > bestSum)
+        {
+            bestSum = currentSum;
+            mostProbableLetter = ANN->neurones[neuroneIndex].targetLetter;
+        }
+    }
+
+    //Check if match is enough
+    if(bestSum < 0.5)
+    {
+        mostProbableLetter = -1;
+    }
+    else
+    {
+        printf("Found letter %d with %d percent match\n", mostProbableLetter, (int)(bestSum * 100));
+    }
+
+
+    return mostProbableLetter;
 }

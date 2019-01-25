@@ -1,9 +1,10 @@
 #include "rescale.h"
+#include <string.h>
 
 /* @definition
  *      Dimentions of the matrix of inputs of a neuron for one letter
  */
-#define NB_INPUTS_NEURONE 32
+#define NB_INPUTS_NEURONE 60
 
 /* @type
  *      Letters of the alphabet and associated values
@@ -13,8 +14,8 @@ typedef enum{A = 1, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, 
 /* @definition
  *      Values of a binary image
  */
-#define BINARY_BLACK 0
-#define BINARY_WHITE 255
+#define BINARY_BLACK 1
+#define BINARY_WHITE 0
 #define FORMAT_BLACK 1
 #define FORMAT_WHITE -1
 
@@ -39,9 +40,24 @@ typedef struct Neurone
 }Neurone;
 
 
+/* @type
+ *      Structure of a neural network for letter detection
+ *      Composed of undefined number of Neurone
+ * 
+ * @param
+ *      Neurone *neurones   :  table of Neuron for each letter to  detect
+ *      int nbNeurone   :   number of Neuron
+ */
+typedef struct AlphabetNeuralNetwork
+{
+    Neurone *neurones;
+    int nbNeurone;
+}AlphabetNeuralNetwork;
+
+
 /* @function
  *      Creates a neurone with default values
- *      and weights initialized randomly
+ *      and weights initialized
  * 
  * @param
  *      int weightAbsDimention  :   dimention of the weight matrix in abscissa
@@ -54,6 +70,16 @@ Neurone *createNeurone(int weightAbsDimention, int weigthOrdDimention, Letter ta
 
 
 /* @function
+ *      Creates the alphabet neural network of 26 neurones
+ *      initialized and trained
+ * 
+ * @return  :   AlphabetNeuralNetwork created
+ * */
+AlphabetNeuralNetwork *createAlphabetNeuralNetwork(void);
+
+
+
+/* @function
  *      Calculate the weighted sum of an image
  *      for a given neurone
  * 
@@ -63,7 +89,7 @@ Neurone *createNeurone(int weightAbsDimention, int weigthOrdDimention, Letter ta
  * 
  * @return  :   result of the sum
  */
-int calculateWeightedSum(DonneesImageTab *binaryImage, Neurone *workingNeurone);
+float calculateWeightedSum(DonneesImageTab *binaryImage, Neurone *workingNeurone);
 
 
 
@@ -102,4 +128,21 @@ void binariseImage(DonneesImageTab *greyImage);
  * 
  * @return  :   \
  */
-void trainNeurone(Neurone *neurone, DonneesImageTab *formatImage);   
+void trainNeurone(Neurone *neurone, DonneesImageTab *formatImage);
+
+
+
+/* @function
+ *      Analyze a binary image of size 60x60
+ *      and return the most probable letter detected
+ *      
+ * @param
+ *      AlphabetNeuralNetwork *ANN    :   neural network trained
+ *      DonneesImageTab *binaryImage  :   image to analyze
+ * 
+ * @return  :   most probable letter detected, or -1 if nothing
+ */
+Letter detectLetterOnImage(AlphabetNeuralNetwork *ANN, DonneesImageTab *binaryImage);
+
+
+
