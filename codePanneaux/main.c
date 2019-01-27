@@ -40,7 +40,15 @@ int main(int argc, char** argv)
 	    srand(10495854);
 	    
 	    // We erase all previously detected signs
-	    system("rm -f panneaux/*");
+	    int errorSystem = system("rm -f panneaux/*");
+	    if (errorSystem)
+	    {
+	        printf("Error : couldn't remove files in the following folder : panneaux\n");
+	    }
+	    
+	    //--- Initialization of the neural network wich will detect the different characters
+	    printf("Creating the neural network that will detect the characters on the sign\n");
+	    AlphabetNeuralNetwork* neuralNetwork = createAlphabetNeuralNetwork();
 	    
 	    ///////////////////////////
 	    //--- Basic Variables ---//
@@ -73,11 +81,19 @@ int main(int argc, char** argv)
 	    // We convert it to a DonneesImageTab
         DonneesImageTab* imageRefTab = RGBToTab(imageRef);
         
-        // We set up some basic variable for the next step
+        // We set up some basic variable for the next step (finding the sign)
 	    DonneesImageTab* currentShape = NULL; // Will be use to store a potential sign
 	    DonneesImageTab* LBPShape = NULL; // Will be use to store his LBP version
 	    DonneesImageRGB* imageRegionShape = NULL; // Will be use to convert it to a BMP image
-	    float error = 0; // Will be use to store the error between the LBP reference and the LBP 
+	    float error = 0; // Will be use to store the error between the LBP reference and the LBP
+	    // And we set up some basic variable for the character detections
+	    DonneesImageTab* imageRegionSign = NULL; // Will be use to store all the regions we detect in a sign
+	    IdRegions* idRegionsSign = NULL; // Will be use to store the ID of each of the region found on the sign
+	    int indexChar = 0; // Will be use to check every character we found on the sign
+	    DonneesImageTab* currentCharacter = NULL; // Will be use to store the potential character, so we can test it
+	    DonneesImageTab* squaredCharacter = NULL; // Will be use to transform the character to a square image
+	    DonneesImageTab* rescaledCharacter = NULL; // Will be use to store the rescale character
+	    int idCharacter = -1; // Will be use to store the ID of the found character
 	    // For each detected regions
 	    int i;
 	    for(i = 0; i < idRegions->size; i++)
@@ -90,12 +106,10 @@ int main(int argc, char** argv)
 	        LBPShape = applyLocalBinaryPattern(currentShape);
 	        // We calculate the error between this LBP image and the reference one
 	        error = binaryPatternComp(LBPShape, imageRefTab);
-	        // We print the error of the image
-	        printf("error of the region %d is %f\n", i, error);
 	        // If the error is positive (no problem) and if it is bellow 0.00008 (seems to be a good value)
 	        if (0 < error && error <= 0.00008)
 	        {
-	            printf(" The region %d seems to be a sign", i);
+	            printf(" The region %d seems to be a sign\n", i);
 	            // Then we concider that this region is a sign, so :
 	            // We reset the path of the image
 	            strcpy(pathStepImage, "");
@@ -105,6 +119,53 @@ int main(int argc, char** argv)
 	            imageRegionShape = tabToRGB(currentShape);
 	            // And then we write the BMP image
 	            ecrisBMPRGB_Dans(imageRegionShape, pathStepImage);
+	            
+	            printf("  Finding characters\n");
+	            //--- Then we try to find all the character in the supposed sign
+	            // First, we apply some filters on the image we found so it is easier to use
+	            cutBetweenLevel(currentShape, 100, 255);
+	            cutBetweenLevel(currentShape, 0, 100);
+                // We set the DonneesImageTab that will contain the regions of the current signS
+	            imageRegionSign = initTabRegion(currentShape->largeurImage, currentShape->hauteurImage);
+                // We find all the regions
+	            idRegionsSign = findAllRegionBottomUp(currentShape, imageRegionSign, 200);
+	            printf("  %d potential characters found\n", idRegionsSign->size);
+	            
+	            //--- Letter detection
+	            printf("  Detecting wich character are real one and putting the word back together\n");
+	            printf("    The word written on the sign is : ");
+	            // For each potential characters found on the sign
+	            for(indexChar = 0; indexChar < idRegionsSign->size; indexChar++)
+	            {
+	                // We extract it to a temporary variables
+	                currentCharacter = getShape(imageRegionSign, idRegionsSign->regions[indexChar]);
+	                // If it is a valid shape
+	                if (currentCharacter != NULL)
+	                {
+	                    // We square it
+	                    squaredCharacter = squareImage(currentCharacter);
+	                    // And rescale it so it can be used by the neural network
+	                    rescaledCharacter = rescale(squaredCharacter, NB_INPUTS_NEURONE) ;
+	                    // We find which letter it is
+	                    idCharacter = detectLetterOnImage(neuralNetwork, rescaledCharacter);
+	                    // If we found the letter
+	                    if (idCharacter != -1)
+	                    {
+	                        // We write it down as a char
+	                        printf("%c", idCharacter + 65);
+	                    }
+	                    // We free the modified shape
+	                    libereDonneesTab(&squaredCharacter);
+	                    libereDonneesTab(&rescaledCharacter);
+	                }
+	                // We free the current character shape
+	                libereDonneesTab(&currentCharacter);
+	            }
+	            // Once we finished writing the word marked on the sign, we do a cariage return 
+	            printf("\n");
+                // Then, we free everything
+	            libereDonneesTab(&imageRegionSign);
+	            destructIdRegions(&idRegionsSign);
 	        }
 	        // Then we free the memory before the next loop
 	        libereDonneesTab(&currentShape);
