@@ -543,24 +543,52 @@ DonneesImageTab* getOriginalShape(DonneesImageTab* tabImage, DonneesImageTab* ta
 	return tabShape;
 }
 
-
 void writeAllRegion(DonneesImageTab *imageRegion, IdRegions *allRegions)
 {
-	int index;
-	int increment = 1;
-	char bufferName[20];
-	char totalBuffer[20];
+	int index, i, j;
+	char bufferName[50];
+	char totalBuffer[50];
+	DonneesImageTab* currentRegion = NULL;
+	DonneesImageRGB* currentRegionRGB = NULL;
 
+    system("rm -f regions/*");
 	for(index = 0; index < allRegions->size; index++)
 	{
-		sprintf(bufferName, "%d", increment);
+		sprintf(bufferName, "%d", index);
 		strcat(bufferName, "_e.bmp");
 		strcpy(totalBuffer, "./regions/");
 		strcat(totalBuffer, bufferName);
+		
+        currentRegion = getShape(imageRegion, allRegions->regions[index]);
+        
+        if (currentRegion != NULL)
+        {
+            for (i = 0; i < currentRegion->largeurImage; i++)
+            {  
+                for (j = 0; j < currentRegion->hauteurImage; j++)
+                {
+                    if (currentRegion->donneesTab[i][j][BLUE] == UNCHECKED)
+                    {
+                        currentRegion->donneesTab[i][j][BLUE] = 255;
+                        currentRegion->donneesTab[i][j][GREEN] = 255;
+                        currentRegion->donneesTab[i][j][RED] = 255;
+                    }
+                    else
+                    {
+                        currentRegion->donneesTab[i][j][BLUE] = 0;
+                        currentRegion->donneesTab[i][j][GREEN] = 0;
+                        currentRegion->donneesTab[i][j][RED] = 0;
+                    }
+                }
+            }
+            currentRegionRGB = tabToRGB(currentRegion);
+		    ecrisBMPRGB_Dans( currentRegionRGB, totalBuffer);
+		    
+		    libereDonneesTab(&currentRegion);
+		    libereDonneesImageRGB(&currentRegionRGB);
+		}
+		
 
-		ecrisBMPRGB_Dans( tabToRGB(getShape(imageRegion, allRegions->regions[index])), totalBuffer);
-
-		increment++;
 		strcpy(bufferName, "");
 		strcpy(totalBuffer, "");
 	}
