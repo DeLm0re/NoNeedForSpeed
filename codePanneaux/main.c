@@ -81,6 +81,9 @@ int main(int argc, char** argv)
 	    // And we set up some basic variable for the character detections
 	    DonneesImageTab* imageRegionSign = NULL; // Will be use to store all the regions we detect in a sign
 	    IdRegions* idRegionsSign = NULL; // Will be use to store the ID of each of the region found on the sign
+	    indexChar = 0; // Will be use to check every character we found on the sign
+	    DonneesimageTab* currentCharacter = NULL; // Will be use to store the potential character, so we can test it
+	    DonneesImageTab* rescaledCharacter = NULL; // Will be use to store the rescale character
 	    // For each detected regions
 	    int i;
 	    for(i = 0; i < idRegions->size; i++)
@@ -119,9 +122,22 @@ int main(int argc, char** argv)
                 // We find all the regions
 	            idRegionsSign = findAllRegionBottomUp(currentShape, imageRegionSign, 200);
 	            printf("  %d potential characters found\n", idRegionsSign->size);
-	            printf("  Writing each characters as an image in the regions folder\n");
-                // We write them as BMP image in the "regions" folder
-	            writeAllRegion(imageRegionSign, idRegionsSign);
+	            
+	            //--- Letter detection
+	            // For each potential characters found on the sign
+	            for(indexChar = 0; indexChar < idRegionsSign->size; indexChar++)
+	            {
+	                // We extract it to a temporary variables
+	                currentCharacter = getShape(imageRegionSign, idRegionsSign->regions[indexChar]);
+	                if (currentCharacter != NULL)
+	                {
+	                    rescaledCharacter = rescale(currentCharacter, 60) ;
+	                    ///---théo
+	                    libereDonneesTab(&rescaledCharacter);
+	                }
+	                libereDonneesTab(&currentCharacter);
+	            }
+	            
                 // Then, we free everything
 	            libereDonneesTab(&imageRegionSign);
 	            destructIdRegions(&idRegionsSign);
