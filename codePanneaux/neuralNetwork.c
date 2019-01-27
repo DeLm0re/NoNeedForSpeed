@@ -275,7 +275,7 @@ Letter detectLetterOnImage(AlphabetNeuralNetwork *ANN, DonneesImageTab *binaryIm
     }
     else
     {
-        printf("Found letter %d with %d percent match\n", mostProbableLetter, (int)(bestSum * 100));
+        //printf("Found letter %d with %d percent match\n", mostProbableLetter, (int)(bestSum * 100));
     }
 
 

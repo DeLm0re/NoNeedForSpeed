@@ -73,7 +73,7 @@ DonneesImageTab* squareImage(DonneesImageTab* image)
     // we set the return squared image
     squareImage = initTab(sizeSquare, sizeSquare) ;
 
-    printf("first for\n");
+    //printf("first for\n");
     // we fill the gap on the left or the top of the image with white color
     for(line=firstLineStart ; line<firstLineLimit ; line+=1)
     {
@@ -86,7 +86,7 @@ DonneesImageTab* squareImage(DonneesImageTab* image)
     }
     // we transfer the origin image on the squared image
     // set of increments of origin image matrix
-    printf("second for\n");
+    //printf("second for\n");
     lineImage = 0 ;
     columnImage = 0 ;
     for(line=secondLineStart ; line<secondLineLimit ; line+=1)
@@ -109,7 +109,7 @@ DonneesImageTab* squareImage(DonneesImageTab* image)
             columnImage+=1 ;
         }
     }
-    printf("third for\n");
+    //printf("third for\n");
     // we fill the gap on the right or the bottom of the squared image with the white color
     for(line=thirdLineStart ; line<thirdLineLimit ; line+=1)
     {
@@ -134,8 +134,6 @@ DonneesImageTab* squareImage(DonneesImageTab* image)
  */
 DonneesImageTab* rescale(DonneesImageTab* image, int newSize)
 {
-    // Coefficient to resize the image
-    float coef ;
     // The image put in parameter must be square
     int sizeImage = image->hauteurImage ;
     // the returned resized image
@@ -145,8 +143,6 @@ DonneesImageTab* rescale(DonneesImageTab* image, int newSize)
     //  setting of the resized image
     resizedImage = initTabRegion(newSize, newSize) ;
 
-    coef = (float)newSize/(float)sizeImage ;
-    printf("coef: %f \n", coef) ;
     for(lineImage=0 ; lineImage<sizeImage ; lineImage+=1)
     {
         for(columnImage=0 ; columnImage<sizeImage ; columnImage+=1)

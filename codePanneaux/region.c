@@ -551,7 +551,7 @@ void writeAllRegion(DonneesImageTab *imageRegion, IdRegions *allRegions)
 	DonneesImageTab* currentRegion = NULL;
 	DonneesImageRGB* currentRegionRGB = NULL;
 
-    system("rm -f regions/*");
+    //system("rm -f regions/*");
 	for(index = 0; index < allRegions->size; index++)
 	{
 		sprintf(bufferName, "%d", index);
