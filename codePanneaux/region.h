@@ -56,4 +56,6 @@ DonneesImageTab* getShape(DonneesImageTab* tabRegion,  IdRegion* idRegion);
 
 DonneesImageTab* getOriginalShape(DonneesImageTab* tabImage, DonneesImageTab* tabRegion,  IdRegion* idRegion);
 
+void regionToBinary(DonneesImageTab* tabImage);
+
 void writeAllRegion(DonneesImageTab *imageRegion, IdRegions *allRegions);
