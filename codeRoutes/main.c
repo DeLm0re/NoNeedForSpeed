@@ -47,6 +47,13 @@ int main(int argc, char** argv)
 	// Initializing the random with a seed
 	srand(10495854);
 	
+	// We erase all previously detected signs
+    int errorSystem = system("rm -f visualization/*");
+    if (errorSystem)
+    {
+        printf("Error : couldn't remove files in the following folder : panneaux\n");
+    }
+	
 	// we create a car and initialize it
 	Car carPosition;
 	carPosition.abscissa = imageSize/2; // the car is centered at the beginning
