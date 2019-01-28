@@ -543,6 +543,29 @@ DonneesImageTab* getOriginalShape(DonneesImageTab* tabImage, DonneesImageTab* ta
 	return tabShape;
 }
 
+void regionToBinary(DonneesImageTab* tabImage)
+{
+    int i, j;
+    for(i = 0; i < tabImage->largeurImage; i++)
+    {
+        for(j = 0; j < tabImage->hauteurImage; j++)
+        {
+            if (tabImage->donneesTab[i][j][BLUE] == UNCHECKED)
+            {
+                tabImage->donneesTab[i][j][BLUE] = 255;
+                tabImage->donneesTab[i][j][GREEN] = 255;
+                tabImage->donneesTab[i][j][RED] = 255;
+            }
+            else
+            {
+                tabImage->donneesTab[i][j][BLUE] = 0;
+                tabImage->donneesTab[i][j][GREEN] = 0;
+                tabImage->donneesTab[i][j][RED] = 0;
+            }
+        } 
+    }
+}
+
 void writeAllRegion(DonneesImageTab *imageRegion, IdRegions *allRegions)
 {
 	int index, i, j;

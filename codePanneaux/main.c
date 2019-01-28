@@ -142,10 +142,12 @@ int main(int argc, char** argv)
 	                // If it is a valid shape
 	                if (currentCharacter != NULL)
 	                {
+	                    // We binarise it
+	                    regionToBinary(currentCharacter);
 	                    // We square it
 	                    squaredCharacter = squareImage(currentCharacter);
 	                    // And rescale it so it can be used by the neural network
-	                    rescaledCharacter = rescale(squaredCharacter, NB_INPUTS_NEURONE) ;
+	                    rescaledCharacter = rescale(squaredCharacter, NB_INPUTS_NEURONE);
 	                    // We find which letter it is
 	                    idCharacter = detectLetterOnImage(neuralNetwork, rescaledCharacter);
 	                    // If we found the letter
