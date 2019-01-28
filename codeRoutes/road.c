@@ -99,7 +99,7 @@ DonneesImageRGB* createImageRoad(road* myRoad)
 
     DonneesImageTab *myImageRoad = initTab(WIDTH_IMAGE_ROAD, HEIGHT_IMAGE_ROAD+1);
 
-    int heightStep = HEIGHT_IMAGE_ROAD/LENGTH_ROAD;
+    int heightStep = HEIGHT_IMAGE_ROAD/myRoad->length;
 
     int previousHeight = 0;
     int previousWidth = WIDTH_IMAGE_ROAD/2;

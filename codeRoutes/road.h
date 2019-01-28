@@ -15,9 +15,6 @@
 #define HEIGHT_IMAGE_ROAD (500)
 #define WIDTH_IMAGE_ROAD (500)
 
-//Definition of the road's length
-#define LENGTH_ROAD (50)
-
 //Définition of the type "road"
 typedef struct road
 {
